@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { CostItem } from '../types';
 import {
   Smartphone,
   MapPin,
@@ -7,18 +8,40 @@ import {
   AlertTriangle,
   CheckCircle2,
   Camera,
-  ArrowRight,
-  ShieldAlert,
-  X
+  Receipt,
+  ArrowLeft,
+  X,
+  FileCheck,
+  Fuel,
+  DollarSign
 } from 'lucide-react';
 
 export const DriverMobileView: React.FC = () => {
-  const { activeSelectedTrip: trip, addOperationalEvent, updateTripStatus, setCurrentView } = useApp();
+  const {
+    activeSelectedTrip: trip,
+    addOperationalEvent,
+    updateTripStatus,
+    uploadExpenseTicket,
+    uploadPodDocument,
+    setCurrentView
+  } = useApp();
 
+  // Modals state
   const [showIssueModal, setShowIssueModal] = useState(false);
+  const [showTicketModal, setShowTicketModal] = useState(false);
+
+  // Issue modal fields
   const [issueType, setIssueType] = useState<string>('Waiting');
   const [issueNote, setIssueNote] = useState<string>('');
   const [photoAttached, setPhotoAttached] = useState<boolean>(false);
+
+  // Ticket / Expense / POD modal fields
+  const [ticketType, setTicketType] = useState<'Fuel' | 'Tolls' | 'POD' | 'Meals' | 'Lodging' | 'Other'>('Fuel');
+  const [ticketAmount, setTicketAmount] = useState<number>(850);
+  const [ticketNotes, setTicketNotes] = useState<string>('Ticket de Carga de Diésel Gasolinera Pemex');
+  const [ticketPhotoAttached, setTicketPhotoAttached] = useState<boolean>(true);
+
+  // Feedback message
   const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
 
   const handleActionClick = (actionLabel: string, category: any) => {
@@ -45,7 +68,7 @@ export const DriverMobileView: React.FC = () => {
       category: 'REPORT_ISSUE',
       reportedIssueType: issueType,
       locationName: trip.currentLocationName,
-      description: `[REPORTE OPERADOR - ${issueType.toUpperCase()}]: ${issueNote || 'Sin notas adicionadas.'}`,
+      description: `[REPORTE OPERADOR - ${issueType.toUpperCase()}]: ${issueNote || 'Sin notas adicionales.'}`,
       evidenceUrl: photoAttached
         ? 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=80'
         : undefined,
@@ -58,10 +81,59 @@ export const DriverMobileView: React.FC = () => {
     setTimeout(() => setActionSuccessMsg(null), 4000);
   };
 
+  const handleUploadTicketSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const photoUrl = ticketPhotoAttached
+      ? 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80'
+      : undefined;
+
+    if (ticketType === 'POD') {
+      uploadPodDocument(
+        trip.id,
+        photoUrl || 'https://images.unsplash.com/photo-1618042164219-62c820f10723?auto=format&fit=crop&w=600&q=80'
+      );
+      setActionSuccessMsg('¡Documento POD cargado exitosamente! Actualizado en el Dashboard.');
+    } else {
+      const costCategory: CostItem['category'] =
+        ticketType === 'Fuel'
+          ? 'Fuel'
+          : ticketType === 'Tolls'
+          ? 'Tolls'
+          : ticketType === 'Meals'
+          ? 'Meals'
+          : ticketType === 'Lodging'
+          ? 'Lodging'
+          : 'Other expenses';
+
+      uploadExpenseTicket(trip.id, costCategory, ticketAmount, ticketNotes, photoUrl);
+      setActionSuccessMsg(
+        `¡Ticket de ${ticketType} ($${ticketAmount} MXN) cargado e impactado en Trip Economics!`
+      );
+    }
+
+    setShowTicketModal(false);
+    setTicketNotes('');
+    setTimeout(() => setActionSuccessMsg(null), 4000);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-start p-4 sm:p-6 font-sans">
-      {/* Mobile frame wrapper */}
-      <div className="w-full max-w-sm bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl space-y-4 p-5">
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-start p-4 sm:p-6 font-sans relative">
+      {/* ALWAYS VISIBLE TOP EXIT NAVIGATION BAR */}
+      <div className="w-full max-w-sm mb-3 flex items-center justify-between bg-emerald-950/90 border border-emerald-700/80 px-4 py-2.5 rounded-2xl shadow-lg backdrop-blur-md">
+        <button
+          onClick={() => setCurrentView('OVERVIEW')}
+          className="flex items-center space-x-2 text-white font-bold text-xs hover:text-emerald-200 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4 text-emerald-400" />
+          <span>Volver al Dashboard Web</span>
+        </button>
+        <span className="text-[10px] text-emerald-300 font-mono bg-emerald-900/60 px-2 py-0.5 rounded">
+          Modo Chofer
+        </span>
+      </div>
+
+      {/* Mobile Frame Wrapper */}
+      <div className="w-full max-w-sm bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl space-y-4 p-5 mb-16">
         {/* Top Header Bar */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center space-x-2">
@@ -70,9 +142,9 @@ export const DriverMobileView: React.FC = () => {
           </div>
           <button
             onClick={() => setCurrentView('OVERVIEW')}
-            className="text-xs text-slate-400 hover:text-white"
+            className="text-xs text-emerald-400 hover:underline font-semibold"
           >
-            Salir a Web Admin
+            ← Salir a Admin
           </button>
         </div>
 
@@ -86,17 +158,20 @@ export const DriverMobileView: React.FC = () => {
           </div>
 
           <div>
-            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Destino:</span>
+            <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+              Cliente & Destino:
+            </span>
             <h2 className="text-base font-bold text-white leading-snug">{trip.destinationName}</h2>
+            <div className="text-xs text-slate-400 mt-0.5">{trip.customerName}</div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-800">
+          <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-800">
             <div>
               <span className="text-[10px] text-slate-400 block">Siguiente Acción:</span>
               <strong className="text-emerald-400">Arribo & Descarga</strong>
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 block">ETA Programado:</span>
+              <span className="text-[10px] text-slate-400 block">Cita Entrega:</span>
               <strong className="text-white">{trip.deliveryAppointment}</strong>
             </div>
           </div>
@@ -104,22 +179,31 @@ export const DriverMobileView: React.FC = () => {
 
         {/* Feedback Alert Banner */}
         {actionSuccessMsg && (
-          <div className="p-3 bg-emerald-900/90 text-emerald-100 rounded-xl border border-emerald-700 text-xs font-medium animate-fade-in text-center">
+          <div className="p-3 bg-emerald-900/90 text-emerald-100 rounded-xl border border-emerald-700 text-xs font-semibold animate-fade-in text-center shadow-lg">
             {actionSuccessMsg}
           </div>
         )}
 
-        {/* BIG TOUCH BUTTONS (Requirement 16) */}
-        <div className="space-y-3 pt-2">
+        {/* BIG TOUCH BUTTONS (Requirement 16 & Upload Ticket requirement) */}
+        <div className="space-y-3 pt-1">
           <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-            Acciones Principales del Viaje:
+            Acciones de Ruta & Captura de Gastos:
           </div>
+
+          {/* UPLOAD TICKET / EXPENSE / POD BUTTON (NEW REQUIREMENT) */}
+          <button
+            onClick={() => setShowTicketModal(true)}
+            className="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 active:scale-95 text-white font-bold text-sm rounded-2xl shadow-xl transition-all flex items-center justify-center space-x-2 border border-emerald-500/50"
+          >
+            <Receipt className="w-5 h-5 text-emerald-200" />
+            <span>SUBIR TICKET / GASTO / POD (FOTO)</span>
+          </button>
 
           <button
             onClick={() => handleActionClick('LLEGUE A DESTINO (ARRIVED)', 'ARRIVAL')}
-            className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-base rounded-2xl shadow-lg transition-transform active:scale-95 flex items-center justify-center space-x-2"
+            className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-sm rounded-2xl shadow-md transition-transform active:scale-95 flex items-center justify-center space-x-2"
           >
-            <MapPin className="w-5 h-5" />
+            <MapPin className="w-4 h-4" />
             <span>ARRIVED (LLEGUÉ A DESTINO)</span>
           </button>
 
@@ -146,27 +230,134 @@ export const DriverMobileView: React.FC = () => {
             <span>DELIVERED (ENTREGADO)</span>
           </button>
 
-          {/* REPORT ISSUE BUTTON (Requirement 17) */}
+          {/* REPORT ISSUE BUTTON */}
           <button
             onClick={() => setShowIssueModal(true)}
-            className="w-full py-3.5 bg-amber-600 hover:bg-amber-500 active:bg-amber-700 text-white font-bold text-sm rounded-xl shadow-md transition-transform active:scale-95 flex items-center justify-center space-x-2"
+            className="w-full py-3 bg-amber-600 hover:bg-amber-500 active:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md transition-transform active:scale-95 flex items-center justify-center space-x-2"
           >
             <AlertTriangle className="w-4 h-4" />
             <span>REPORT ISSUE (REPORTAR PROBLEMA)</span>
           </button>
-
-          <button
-            onClick={() => handleActionClick('FINALIZAR VIAJE (END TRIP)', 'DELIVERY')}
-            className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-xl border border-slate-700"
-          >
-            END TRIP (FINALIZAR)
-          </button>
         </div>
       </div>
 
-      {/* REPORT ISSUE MODAL (Requirement 17) */}
+      {/* FLOATING QUICK EXIT BUTTON AT BOTTOM */}
+      <div className="fixed bottom-3 z-40">
+        <button
+          onClick={() => setCurrentView('OVERVIEW')}
+          className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-full border border-slate-600 shadow-2xl flex items-center space-x-2"
+        >
+          <ArrowLeft className="w-4 h-4 text-emerald-400" />
+          <span>Regresar a la Web Principal Admin</span>
+        </button>
+      </div>
+
+      {/* UPLOAD TICKET / EXPENSE / POD MODAL */}
+      {showTicketModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-slate-100 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2">
+                <Camera className="w-4 h-4 text-emerald-400" />
+                <h3 className="font-bold text-sm text-white">Captura de Ticket / Foto Gasto</h3>
+              </div>
+              <button
+                onClick={() => setShowTicketModal(false)}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUploadTicketSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">
+                  Tipo de Documento / Gasto:
+                </label>
+                <select
+                  value={ticketType}
+                  onChange={(e) => setTicketType(e.target.value as any)}
+                  className="w-full bg-slate-950 border border-slate-700 text-white p-2.5 rounded-xl font-medium focus:outline-none"
+                >
+                  <option value="Fuel">Ticket de Diésel / Gasolinera</option>
+                  <option value="Tolls">Comprobante de Caseta / Peaje</option>
+                  <option value="POD">Proof of Delivery (POD / Sello Firmado)</option>
+                  <option value="Meals">Viáticos de Alimentos</option>
+                  <option value="Lodging">Hospedaje</option>
+                  <option value="Other">Otro Gasto Imprevisto</option>
+                </select>
+              </div>
+
+              {ticketType !== 'POD' && (
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    Monto del Ticket (MXN):
+                  </label>
+                  <input
+                    type="number"
+                    value={ticketAmount}
+                    onChange={(e) => setTicketAmount(Number(e.target.value))}
+                    className="w-full bg-slate-950 border border-slate-700 text-emerald-400 p-2.5 rounded-xl font-mono font-bold text-sm focus:outline-none"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">
+                  Nota / Nombre de Gasolinera o Caseta:
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. Pemex Matehuala Km 182 / Caseta Tepotzotlán"
+                  value={ticketNotes}
+                  onChange={(e) => setTicketNotes(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 text-white p-2.5 rounded-xl focus:outline-none"
+                />
+              </div>
+
+              {/* Photo Simulation button */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setTicketPhotoAttached(!ticketPhotoAttached)}
+                  className={`w-full py-3 px-3 rounded-xl border flex items-center justify-center space-x-2 font-bold text-xs transition-colors ${
+                    ticketPhotoAttached
+                      ? 'bg-emerald-950 border-emerald-600 text-emerald-300'
+                      : 'bg-slate-800 border-slate-700 text-slate-300'
+                  }`}
+                >
+                  <Camera className="w-4 h-4 text-emerald-400" />
+                  <span>
+                    {ticketPhotoAttached
+                      ? '✓ Fotografía del Ticket / POD Capturada'
+                      : 'Capturar Foto con la Cámara del Celular'}
+                  </span>
+                </button>
+              </div>
+
+              <div className="pt-2 flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowTicketModal(false)}
+                  className="px-4 py-2 bg-slate-800 text-slate-300 font-medium rounded-xl"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-md"
+                >
+                  Subir & Enviar a Dashboard
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* REPORT ISSUE MODAL */}
       {showIssueModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-slate-100">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center space-x-2">

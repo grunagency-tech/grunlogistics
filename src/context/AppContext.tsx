@@ -10,7 +10,9 @@ import {
   OperationalEvent,
   RoutingProviderType,
   RecoveryStatus,
-  TripStatus
+  TripStatus,
+  CostItem,
+  FuelTransaction
 } from '../types';
 import {
   companyProfile,
@@ -77,6 +79,14 @@ interface AppContextType {
   updateRecoveryStatus: (caseId: string, status: RecoveryStatus) => void;
   addOperationalEvent: (tripId: string, event: Partial<OperationalEvent>) => void;
   updateTripStatus: (tripId: string, status: TripStatus) => void;
+  uploadExpenseTicket: (
+    tripId: string,
+    category: CostItem['category'],
+    amountMXN: number,
+    notes: string,
+    evidenceUrl?: string
+  ) => void;
+  uploadPodDocument: (tripId: string, evidenceUrl: string) => void;
   run2MinDemo: () => void;
   activeSelectedTrip: Trip;
 }
@@ -182,6 +192,101 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  const uploadExpenseTicket = (
+    tripId: string,
+    category: CostItem['category'],
+    amountMXN: number,
+    notes: string,
+    evidenceUrl?: string
+  ) => {
+    const costId = `CST-${Date.now().toString().slice(-4)}`;
+    const newCost: CostItem = {
+      id: costId,
+      tripId,
+      category,
+      amountMXN,
+      isEstimated: false,
+      date: new Date().toISOString().split('T')[0],
+      source: 'MANUAL',
+      status: 'APPROVED',
+      notes
+    };
+
+    setTrips((prev) =>
+      prev.map((t) => {
+        if (t.id === tripId) {
+          const updatedCosts = [...t.costs, newCost];
+          const actualFuel = category === 'Fuel' ? t.economics.actualFuelMXN + amountMXN : t.economics.actualFuelMXN;
+          const actualTolls = category === 'Tolls' ? t.economics.actualTollsMXN + amountMXN : t.economics.actualTollsMXN;
+          const actualOther = category !== 'Fuel' && category !== 'Tolls' && category !== 'Driver pay'
+            ? t.economics.actualOtherMXN + amountMXN
+            : t.economics.actualOtherMXN;
+
+          const totalActualCost = actualFuel + actualTolls + t.economics.actualDriverPayMXN + actualOther;
+          const actualMargin = t.economics.revenueMXN - totalActualCost;
+          const actualMarginPct = Math.round((actualMargin / t.economics.revenueMXN) * 1000) / 10;
+          const costVar = totalActualCost - t.economics.totalEstimatedCostMXN;
+
+          return {
+            ...t,
+            costs: updatedCosts,
+            economics: {
+              ...t.economics,
+              actualFuelMXN: actualFuel,
+              actualTollsMXN: actualTolls,
+              actualOtherMXN: actualOther,
+              totalActualCostMXN: totalActualCost,
+              actualMarginMXN: actualMargin,
+              actualMarginPercent: actualMarginPct,
+              costVarianceMXN: costVar,
+              marginVarianceMXN: actualMargin - t.economics.expectedMarginMXN,
+              breakEvenRevenueMXN: totalActualCost,
+              marginBufferMXN: actualMargin
+            }
+          };
+        }
+        return t;
+      })
+    );
+
+    // Add operational event log
+    addOperationalEvent(tripId, {
+      category: 'OTHER',
+      description: `[TICKET SUBIDO POR OPERADOR - ${category.toUpperCase()}]: $${amountMXN} MXN (${notes})`,
+      evidenceUrl: evidenceUrl || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80',
+      createdBy: 'DRIVER'
+    });
+  };
+
+  const uploadPodDocument = (tripId: string, evidenceUrl: string) => {
+    setTrips((prev) =>
+      prev.map((t) => {
+        if (t.id === tripId) {
+          return {
+            ...t,
+            podUploaded: true,
+            podUrl: evidenceUrl || 'https://images.unsplash.com/photo-1618042164219-62c820f10723?auto=format&fit=crop&w=600&q=80'
+          };
+        }
+        return t;
+      })
+    );
+
+    // Resolve any MISSING_POD exception for this trip
+    setExceptions((prev) =>
+      prev.map((e) =>
+        e.tripId === tripId && e.type === 'MISSING_POD' ? { ...e, status: 'RESOLVED' } : e
+      )
+    );
+
+    addOperationalEvent(tripId, {
+      category: 'DOCUMENT_ISSUE',
+      description: `[POD CARGADO POR OPERADOR]: Documento de entrega subido exitosamente.`,
+      evidenceUrl: evidenceUrl || 'https://images.unsplash.com/photo-1618042164219-62c820f10723?auto=format&fit=crop&w=600&q=80',
+      createdBy: 'DRIVER'
+    });
+  };
+
   const run2MinDemo = () => {
     setCurrentView('OVERVIEW');
     setIsMobileMenuOpen(false);
@@ -222,6 +327,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateRecoveryStatus,
         addOperationalEvent,
         updateTripStatus,
+        uploadExpenseTicket,
+        uploadPodDocument,
         run2MinDemo,
         activeSelectedTrip
       }}
