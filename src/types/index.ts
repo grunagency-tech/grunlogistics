@@ -62,6 +62,13 @@ export interface Driver {
   payModel: DriverPayModel;
   payRateAmount: number;
   phone: string;
+  // Driver Financial Scorecard
+  scorecardScore: number; // e.g. 94/100
+  fuelEfficiencyKmL: number;
+  fuelEfficiencyVsBaselinePercent: number; // e.g. +4.2%
+  evidenceUploadRatePercent: number; // e.g. 98%
+  onTimeDeliveryRatePercent: number; // e.g. 96%
+  estimatedProductivityBonusMXN: number; // e.g. 1240
 }
 
 export interface Customer {
@@ -70,6 +77,7 @@ export interface Customer {
   taxId: string; // RFC
   contactName: string;
   contactEmail: string;
+  contactPhone?: string;
   totalTrips: number;
   totalRevenueMXN: number;
   totalCostMXN: number;
@@ -113,6 +121,7 @@ export type EventCategory =
   | 'DOCUMENT_ISSUE'
   | 'CUSTOMER_UNAVAILABLE'
   | 'REPORT_ISSUE'
+  | 'WHATSAPP_NOTIFICATION'
   | 'OTHER';
 
 export interface OperationalEvent {
@@ -256,6 +265,12 @@ export interface Trip {
   actualArrival?: string;
   deliveryAppointment: string;
   
+  // SAT Carta Porte Compliance (Requirement 1)
+  cartaPorteFolio?: string;
+  cartaPorteMercanciaSatCode?: string;
+  cartaPorteSeguroPoliza?: string;
+  cartaPorteStatus: 'CUMPLE' | 'PENDIENTE' | 'ERROR';
+
   // Distance
   plannedDistanceKm: number;
   actualDistanceKm: number;
@@ -310,6 +325,7 @@ export interface ExceptionItem {
     | 'TRIP_DELAYED'
     | 'EXCESSIVE_WAITING'
     | 'UNEXPECTED_FUEL'
+    | 'FUEL_THEFT_ALERT'
     | 'UNEXPECTED_EXPENSE'
     | 'ROUTE_DEVIATION'
     | 'DELIVERY_RISK'
@@ -317,6 +333,7 @@ export interface ExceptionItem {
     | 'UNPROFITABLE_TRIP'
     | 'MISSING_POD'
     | 'MISSING_EXPENSE'
+    | 'CARTA_PORTE_MISSING'
     | 'NO_GPS_SIGNAL';
   title: string;
   description: string;
