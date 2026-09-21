@@ -44,6 +44,11 @@ interface AppContextType {
   setSelectedTripId: (id: string) => void;
   openTripDetail: (id: string) => void;
 
+  // Mobile Menu Drawer
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
+  toggleMobileMenu: () => void;
+
   // Search & Filter
   searchQuery: string;
   setSearchQuery: (q: string) => void;
@@ -81,6 +86,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentView, setCurrentView] = useState<ViewType>('OVERVIEW');
   const [selectedTripId, setSelectedTripId] = useState<string>('TRIP-5831');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
 
@@ -95,9 +101,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [routingProviderType, setRoutingProviderType] = useState<RoutingProviderType>('DEMO_ROUTING');
   const [googleApiKey, setGoogleApiKey] = useState('');
 
+  const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
+
   const openTripDetail = (id: string) => {
     setSelectedTripId(id);
     setCurrentView('TRIP_DETAIL');
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleSetCurrentView = (view: ViewType) => {
+    setCurrentView(view);
+    setIsMobileMenuOpen(false);
   };
 
   const activeSelectedTrip = trips.find((t) => t.id === selectedTripId) || trips[0];
@@ -123,7 +137,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       owner: 'Usuario Operaciones'
     };
     setRecoveryCases((prev) => [fullCase, ...prev]);
-    // Also mark trip as having recovery case
     if (caseData.tripId) {
       setTrips((prev) =>
         prev.map((t) =>
@@ -170,8 +183,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const run2MinDemo = () => {
-    // Demo flow as described in spec #45
     setCurrentView('OVERVIEW');
+    setIsMobileMenuOpen(false);
     setTimeout(() => {
       openTripDetail('TRIP-5831');
     }, 1200);
@@ -181,10 +194,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     <AppContext.Provider
       value={{
         currentView,
-        setCurrentView,
+        setCurrentView: handleSetCurrentView,
         selectedTripId,
         setSelectedTripId,
         openTripDetail,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen,
+        toggleMobileMenu,
         searchQuery,
         setSearchQuery,
         statusFilter,

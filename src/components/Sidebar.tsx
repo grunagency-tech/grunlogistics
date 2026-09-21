@@ -11,7 +11,8 @@ import {
   Navigation,
   Database,
   Settings,
-  Smartphone
+  Smartphone,
+  X
 } from 'lucide-react';
 
 interface NavItem {
@@ -22,7 +23,14 @@ interface NavItem {
 }
 
 export const Sidebar: React.FC = () => {
-  const { currentView, setCurrentView, recoveryCases, exceptions } = useApp();
+  const {
+    currentView,
+    setCurrentView,
+    recoveryCases,
+    exceptions,
+    isMobileMenuOpen,
+    setIsMobileMenuOpen
+  } = useApp();
 
   const pendingExceptionsCount = exceptions.filter((e) => e.status === 'PENDING').length;
   const activeRecoveryCount = recoveryCases.filter(
@@ -58,7 +66,7 @@ export const Sidebar: React.FC = () => {
             onClick={() => setCurrentView(item.id)}
             className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all ${
               isActive
-                ? 'bg-emerald-50 text-emerald-900 font-semibold border border-emerald-200/60 shadow-sm'
+                ? 'bg-emerald-50 text-emerald-900 font-semibold border border-emerald-200/60 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
             }`}
           >
@@ -88,32 +96,58 @@ export const Sidebar: React.FC = () => {
   );
 
   return (
-    <aside className="w-56 bg-[#F8F9FA] border-r border-slate-200 flex flex-col justify-between select-none shrink-0 min-h-[calc(100vh-3.5rem)] py-4 px-3">
-      <div className="space-y-6">
-        <div>
-          <div className="px-3 pb-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-            Operación & Finanzas
+    <>
+      {/* Mobile Backdrop */}
+      {isMobileMenuOpen && (
+        <div
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 md:hidden"
+        />
+      )}
+
+      {/* Sidebar Container */}
+      <aside
+        className={`fixed md:static inset-y-0 left-0 z-50 w-64 md:w-56 bg-[#F8F9FA] border-r border-slate-200 flex flex-col justify-between select-none shrink-0 min-h-[calc(100vh-3.5rem)] py-4 px-3 transform transition-transform duration-200 ease-in-out ${
+          isMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'
+        }`}
+      >
+        <div className="space-y-6">
+          {/* Mobile Header inside drawer */}
+          <div className="md:hidden flex items-center justify-between px-2 pb-2 border-b border-slate-200">
+            <span className="font-bold text-xs text-slate-800 uppercase tracking-wider">Navegación</span>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-1 text-slate-400 hover:text-slate-700 rounded-md"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
-          {renderNavGroup(mainNavItems)}
+
+          <div>
+            <div className="px-3 pb-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+              Operación & Finanzas
+            </div>
+            {renderNavGroup(mainNavItems)}
+          </div>
+
+          <div className="pt-3 border-t border-slate-200">
+            <div className="px-3 pb-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+              Configuración
+            </div>
+            {renderNavGroup(secondaryNavItems)}
+          </div>
         </div>
 
-        <div className="pt-3 border-t border-slate-200">
-          <div className="px-3 pb-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-            Configuración
+        {/* Company Info Box */}
+        <div className="p-3 bg-white rounded-lg border border-slate-200 shadow-xs text-xs mt-4">
+          <div className="font-semibold text-slate-900 truncate">Logística Metropolitana</div>
+          <div className="text-[11px] text-slate-500 mt-0.5">42 unidades · 31 activos</div>
+          <div className="mt-2 text-[10px] text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 flex items-center justify-between">
+            <span>Margen Promedio</span>
+            <span className="font-bold">43.0%</span>
           </div>
-          {renderNavGroup(secondaryNavItems)}
         </div>
-      </div>
-
-      {/* Company Info Box */}
-      <div className="p-3 bg-white rounded-lg border border-slate-200 shadow-xs text-xs">
-        <div className="font-semibold text-slate-900 truncate">Logística Metropolitana</div>
-        <div className="text-[11px] text-slate-500 mt-0.5">42 unidades · 31 activos</div>
-        <div className="mt-2 text-[10px] text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 flex items-center justify-between">
-          <span>Margen Promedio</span>
-          <span className="font-bold">43.0%</span>
-        </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };
