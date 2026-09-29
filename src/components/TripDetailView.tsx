@@ -111,9 +111,16 @@ export const TripDetailView: React.FC = () => {
           </div>
         </div>
 
-        <span className="px-2.5 py-1 rounded bg-emerald-800 text-white font-bold text-[10px] tracking-wider uppercase shrink-0">
-          SIN RIESGO DE MULTA SAT
-        </span>
+        <div className="flex items-center space-x-2 shrink-0">
+          <a
+            href="/Carta_Porte_SAT_3.1_5831.pdf"
+            download
+            className="px-3 py-1.5 rounded bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-[10px] tracking-wider uppercase flex items-center space-x-1"
+          >
+            <Download className="w-3 h-3" />
+            <span>Descargar Carta Porte PDF</span>
+          </a>
+        </div>
       </div>
 
       {/* Narrative Trip Header */}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Trip } from '../types';
 import { getRoutingProvider } from '../services/routingProvider';
+import { NewTripModal } from './NewTripModal';
 import {
   Plus,
   Search,
@@ -13,7 +14,8 @@ import {
   DollarSign,
   Clock,
   AlertCircle,
-  FileText
+  FileText,
+  Download
 } from 'lucide-react';
 
 export const TripsView: React.FC = () => {
@@ -172,8 +174,55 @@ export const TripsView: React.FC = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const exportTripsToCSV = () => {
+    const headers = [
+      'Trip Number',
+      'Customer',
+      'Origin',
+      'Destination',
+      'Vehicle Unit',
+      'Driver',
+      'Status',
+      'Carta Porte SAT Status',
+      'Planned Km',
+      'Revenue MXN',
+      'Estimated Cost MXN',
+      'Expected Margin MXN',
+      'Actual Margin MXN'
+    ];
+
+    const rows = filteredTrips.map((t) => [
+      t.tripNumber,
+      `"${t.customerName}"`,
+      `"${t.originName}"`,
+      `"${t.destinationName}"`,
+      `Unidad ${t.vehicleUnitNumber}`,
+      `"${t.driverName}"`,
+      t.status,
+      t.cartaPorteStatus,
+      t.plannedDistanceKm,
+      t.economics.revenueMXN,
+      t.economics.totalEstimatedCostMXN,
+      t.economics.expectedMarginMXN,
+      t.economics.actualMarginMXN
+    ]);
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,\uFEFF' +
+      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `GRUNLOGISTICS_Reporte_Viajes_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-6 space-y-6 max-w-7xl mx-auto font-sans">
+      <NewTripModal isOpen={showNewTripModal} onClose={() => setShowNewTripModal(false)} />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200/80 shadow-xs">
         <div>
@@ -181,16 +230,25 @@ export const TripsView: React.FC = () => {
             Gestión de Viajes (Trips)
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Monitoreo económico y operativo de todos los viajes registrados
+            Monitoreo económico, despacho operativo y compliancia Carta Porte SAT 3.1
           </p>
         </div>
-        <button
-          onClick={() => setShowNewTripModal(true)}
-          className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg transition-all shadow-xs flex items-center space-x-1.5 shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>+ Crear Nuevo Viaje</span>
-        </button>
+        <div className="flex items-center space-x-2 shrink-0">
+          <button
+            onClick={exportTripsToCSV}
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-lg transition-all shadow-xs flex items-center space-x-1.5"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Exportar CSV</span>
+          </button>
+          <button
+            onClick={() => setShowNewTripModal(true)}
+            className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg transition-all shadow-xs flex items-center space-x-1.5"
+          >
+            <Plus className="w-4 h-4" />
+            <span>+ Crear / Despachar Viaje</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter & Search Bar */}
