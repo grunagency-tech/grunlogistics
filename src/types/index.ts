@@ -343,4 +343,40 @@ export interface ExceptionItem {
   actionRecommended: string;
 }
 
-export type RoutingProviderType = 'GOOGLE_ROUTES' | 'DEMO_ROUTING';
+export type RoutingProviderType = 'HERE_MAPS' | 'GOOGLE_ROUTES' | 'DEMO_ROUTING';
+
+export interface SamsaraTelemetryData {
+  vehicleId: string;
+  vehicleUnit: string;
+  lastUpdated: string;
+  engineDiagnosticsStatus: 'HEALTHY' | 'WARNING' | 'CRITICAL';
+  dtcCodes: string[]; // e.g. ['P0101', 'P0300']
+  fuelTankLevelPercent: number; // e.g. 78%
+  batteryVoltageVolts: number; // e.g. 24.2 V
+  engineOilPressurePsi: number;
+  coolantTempCelsius: number;
+  speedKmh: number;
+  engineRpm: number;
+  // NOM-087-SCT-2-2017 Driver Rest Break Compliance
+  nom087DrivingHoursToday: number;
+  nom087RemainingDrivingHours: number;
+  nom087RestBreakRequiredInMinutes: number;
+  nom087Status: 'COMPLIANT' | 'BREAK_DUE_SOON' | 'VIOLATION_RISK';
+}
+
+export interface FleetOpsOrder {
+  id: string;
+  orderNumber: string;
+  customerId: string;
+  customerName: string;
+  originName: string;
+  destinationName: string;
+  cargoDescription: string;
+  weightKg: number;
+  requestedPickupDate: string;
+  requestedDeliveryDate: string;
+  targetPriceMXN: number;
+  status: 'PENDING_DISPATCH' | 'ASSIGNED' | 'IN_TRANSIT' | 'COMPLETED' | 'CANCELLED';
+  assignedDispatcherName: string;
+  assignedTripId?: string;
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Vehicle } from '../types';
+import { getSamsaraTelemetry } from '../services/samsaraApi';
 import {
   Truck,
   MapPin,
@@ -14,7 +15,9 @@ import {
   DollarSign,
   UserCheck,
   Award,
-  ShieldCheck
+  ShieldCheck,
+  Activity,
+  Cpu
 } from 'lucide-react';
 
 export const FleetView: React.FC = () => {
@@ -24,6 +27,7 @@ export const FleetView: React.FC = () => {
 
   const selectedVehicle = vehicles.find((v) => v.id === selectedVehicleId) || vehicles[0];
   const assignedDriver = drivers.find((d) => d.id === selectedVehicle.driverId || d.name === selectedVehicle.driverName);
+  const samsaraTelemetry = getSamsaraTelemetry(selectedVehicle.unitNumber);
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -273,6 +277,66 @@ export const FleetView: React.FC = () => {
                     viaje: $840 MXN.”
                   </div>
                 )}
+              </div>
+
+              {/* Samsara IoT Telemetry & Engine Diagnostics Live Feed */}
+              <div className="p-3 bg-slate-900 text-white rounded-lg space-y-2">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="font-bold font-mono text-emerald-400 flex items-center gap-1.5">
+                    <Activity className="w-3.5 h-3.5" />
+                    SAMSARA TELEMETRY LIVE
+                  </span>
+                  <span className="text-[9px] text-slate-400 font-mono">
+                    {samsaraTelemetry.lastUpdated}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-[10px] pt-1">
+                  <div className="bg-slate-800 p-2 rounded border border-slate-700">
+                    <span className="text-slate-400 block">Nivel Tanque Diésel</span>
+                    <strong className="text-white font-mono text-xs">
+                      {samsaraTelemetry.fuelTankLevelPercent}%
+                    </strong>
+                  </div>
+                  <div className="bg-slate-800 p-2 rounded border border-slate-700">
+                    <span className="text-slate-400 block">Batería & Presión</span>
+                    <strong className="text-white font-mono text-xs">
+                      {samsaraTelemetry.batteryVoltageVolts}V · {samsaraTelemetry.engineOilPressurePsi} PSI
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="p-2 bg-slate-800 rounded border border-slate-700 text-[10px] space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400">Diagnóstico Motor OBD-II:</span>
+                    <span
+                      className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                        samsaraTelemetry.engineDiagnosticsStatus === 'HEALTHY'
+                          ? 'bg-emerald-900/80 text-emerald-300'
+                          : 'bg-amber-900/80 text-amber-300'
+                      }`}
+                    >
+                      {samsaraTelemetry.engineDiagnosticsStatus}
+                    </span>
+                  </div>
+                  {samsaraTelemetry.dtcCodes.length > 0 ? (
+                    <div className="text-rose-400 font-mono text-[9px]">
+                      Códigos DTC: {samsaraTelemetry.dtcCodes.join(', ')}
+                    </div>
+                  ) : (
+                    <div className="text-emerald-400 text-[9px]">Sin códigos de falla DTC detectados</div>
+                  )}
+                </div>
+
+                <div className="p-2 bg-slate-800 rounded border border-slate-700 text-[10px]">
+                  <div className="flex justify-between text-slate-300 font-bold mb-0.5">
+                    <span>NOM-087-SCT (Horas Conducción):</span>
+                    <span className="text-emerald-400 font-mono">{samsaraTelemetry.nom087DrivingHoursToday}h hoy</span>
+                  </div>
+                  <div className="text-[9px] text-slate-400">
+                    Conducción restante: <strong className="text-white font-mono">{samsaraTelemetry.nom087RemainingDrivingHours}h</strong> · Parada descanso: <strong className="text-white font-mono">{samsaraTelemetry.nom087RestBreakRequiredInMinutes}m</strong>
+                  </div>
+                </div>
               </div>
 
               {/* Driver Financial Scorecard Quick View */}

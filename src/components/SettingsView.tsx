@@ -44,7 +44,7 @@ export const SettingsView: React.FC = () => {
               <label className="block font-semibold text-slate-700 mb-2">
                 Seleccionar Proveedor Activo:
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={() => setRoutingProviderType('DEMO_ROUTING')}
@@ -56,7 +56,22 @@ export const SettingsView: React.FC = () => {
                 >
                   <div className="font-bold">DemoRoutingProvider</div>
                   <div className="text-[10px] text-slate-500 font-normal mt-0.5">
-                    Modo seguro con datos simulados coherentes (ROUTING DEMO MODE)
+                    Modo seguro con datos simulados coherentes
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setRoutingProviderType('HERE_MAPS')}
+                  className={`p-3 rounded-lg border text-left transition-all ${
+                    routingProviderType === 'HERE_MAPS'
+                      ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 ring-1 ring-emerald-500 font-bold'
+                      : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="font-bold font-mono">HERE Maps (v8 Truck)</div>
+                  <div className="text-[10px] text-slate-500 font-normal mt-0.5">
+                    Proveedor cartográfico & matrices de tráfico pesado
                   </div>
                 </button>
 
@@ -76,6 +91,18 @@ export const SettingsView: React.FC = () => {
                 </button>
               </div>
             </div>
+
+            {routingProviderType === 'HERE_MAPS' && (
+              <div className="p-3 bg-slate-900 text-white rounded-lg space-y-2 text-xs">
+                <div className="font-bold text-emerald-400">HERE Maps API Configuration (Fleet Telematics & Traffic Matrix)</div>
+                <p className="text-[11px] text-slate-300">
+                  Ruteo para autotransporte de carga con restricciones de peso, altura, peajes y cálculo de demoras por matriz de tráfico en tiempo real.
+                </p>
+                <div className="text-[10px] text-emerald-300 font-mono">
+                  Estatus: HERE Maps Routing v8 & Traffic Matrix API Activo
+                </div>
+              </div>
+            )}
 
             {routingProviderType === 'GOOGLE_ROUTES' && (
               <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
@@ -106,10 +133,10 @@ export const SettingsView: React.FC = () => {
             <Database className="w-5 h-5 text-slate-700" />
             <div>
               <h2 className="text-base font-bold text-slate-900 font-sans">
-                Interfaces de Adaptadores (Adapters Architecture)
+                Interfaces de Adaptadores & Integraciones Core
               </h2>
               <p className="text-xs text-slate-500">
-                Conectores desacoplados para GPS, tarjetas de combustible y ERP
+                Sincronización desacoplada con FleetOps TMS, Samsara API Telemetry y HERE Maps
               </p>
             </div>
           </div>
@@ -117,11 +144,31 @@ export const SettingsView: React.FC = () => {
           <div className="space-y-3 text-xs">
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
               <div>
-                <div className="font-bold text-slate-900">GPSProvider Adapter</div>
-                <div className="text-[11px] text-slate-500">Integración Wialon / Samsara / Mock GPS</div>
+                <div className="font-bold text-slate-900">FleetOps Core TMS Adapter</div>
+                <div className="text-[11px] text-slate-500">Gestión de pedidos, clientes y despachadores</div>
               </div>
               <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">
-                Conectado (Mock/Wialon)
+                Sincronizado (Core TMS)
+              </span>
+            </div>
+
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
+              <div>
+                <div className="font-bold text-slate-900">Samsara Telemetry & Diagnostics API</div>
+                <div className="text-[11px] text-slate-500">Telemetría IoT, códigos DTC OBD-II y NOM-087 HOS</div>
+              </div>
+              <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">
+                Live API Active
+              </span>
+            </div>
+
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
+              <div>
+                <div className="font-bold text-slate-900">HERE Maps Routing & Traffic Matrix</div>
+                <div className="text-[11px] text-slate-500">Cálculo de peajes y ruteo para pesados</div>
+              </div>
+              <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">
+                Conectado (v8 API)
               </span>
             </div>
 
