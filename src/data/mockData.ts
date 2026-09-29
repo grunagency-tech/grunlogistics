@@ -633,11 +633,11 @@ export const initialExceptions: ExceptionItem[] = [
     vehicleUnit: '184',
     type: 'FUEL_THEFT_ALERT',
     title: 'Alerta de Extracción Anómala de Diésel ("Chupado")',
-    description: 'Sensor GPS registró caída abrupta de 45 Litros en 8 minutos con el motor apagado en acotamiento Km 140. Pérdida estimada: $1,058 MXN.',
-    financialImpactMXN: 1058,
+    description: 'Sensor GPS/Tanque registró caída abrupta de 50 Litros en 8 minutos con motor apagado en acotamiento no autorizado Km 140. Pérdida estimada: $3,175 MXN.',
+    financialImpactMXN: 3175,
     createdAt: 'Hace 20 min',
     status: 'PENDING',
-    actionRecommended: 'Contactar al operador Roberto Gómez y verificar punto de parada no autorizado.'
+    actionRecommended: 'Contactar al operador Roberto Gómez e iniciar protocolo anti-robo hormiga.'
   },
   {
     id: 'EXC-004',

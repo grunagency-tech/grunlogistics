@@ -11,15 +11,19 @@ import {
   List,
   AlertTriangle,
   CheckCircle2,
-  DollarSign
+  DollarSign,
+  UserCheck,
+  Award,
+  ShieldCheck
 } from 'lucide-react';
 
 export const FleetView: React.FC = () => {
-  const { vehicles, openTripDetail } = useApp();
-  const [activeTab, setActiveTab] = useState<'LIST' | 'MAP'>('LIST');
+  const { vehicles, drivers, openTripDetail } = useApp();
+  const [activeTab, setActiveTab] = useState<'LIST' | 'MAP' | 'SCORECARD'>('LIST');
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('VEH-184');
 
   const selectedVehicle = vehicles.find((v) => v.id === selectedVehicleId) || vehicles[0];
+  const assignedDriver = drivers.find((d) => d.id === selectedVehicle.driverId || d.name === selectedVehicle.driverName);
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -30,11 +34,11 @@ export const FleetView: React.FC = () => {
             Vista de Flota (Fleet View & Vehicle Economics)
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Estado operativo, ubicación real y rendimiento económico por unidad de transporte
+            Estado operativo, ubicación real, economía por unidad y Scorecard Financiero de Operadores
           </p>
         </div>
 
-        {/* Tab Toggle: List vs Map */}
+        {/* Tab Toggle: List vs Map vs Scorecard */}
         <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-semibold">
           <button
             onClick={() => setActiveTab('LIST')}
@@ -46,6 +50,17 @@ export const FleetView: React.FC = () => {
           >
             <List className="w-3.5 h-3.5" />
             <span>Lista / Economía</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('SCORECARD')}
+            className={`px-3 py-1.5 rounded-md transition-all flex items-center space-x-1.5 ${
+              activeTab === 'SCORECARD'
+                ? 'bg-white text-slate-900 shadow-xs font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <UserCheck className="w-3.5 h-3.5" />
+            <span>Scorecard Chóferes</span>
           </button>
           <button
             onClick={() => setActiveTab('MAP')}
@@ -259,6 +274,152 @@ export const FleetView: React.FC = () => {
                   </div>
                 )}
               </div>
+
+              {/* Driver Financial Scorecard Quick View */}
+              {assignedDriver && (
+                <div className="p-3 bg-emerald-50/60 rounded-lg border border-emerald-200 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-emerald-950 flex items-center gap-1.5">
+                      <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
+                      Scorecard Chófer: {assignedDriver.name}
+                    </span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-600 text-white font-mono">
+                      {assignedDriver.scorecardScore}/100
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-[10px] pt-1">
+                    <div className="bg-white p-2 rounded border border-emerald-100">
+                      <span className="text-slate-500 block">Eficiencia Diésel</span>
+                      <strong className="text-emerald-800 font-mono">
+                        {assignedDriver.fuelEfficiencyVsBaselinePercent >= 0 ? '+' : ''}
+                        {assignedDriver.fuelEfficiencyVsBaselinePercent}% vs base
+                      </strong>
+                    </div>
+                    <div className="bg-white p-2 rounded border border-emerald-100">
+                      <span className="text-slate-500 block">Bono Estimado</span>
+                      <strong className="text-emerald-800 font-mono">
+                        ${assignedDriver.estimatedProductivityBonusMXN.toLocaleString()} MXN
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : activeTab === 'SCORECARD' ? (
+        /* Driver Financial Scorecard View (Feature 5) */
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl border border-slate-200/80 p-6 shadow-xs space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+              <div>
+                <div className="flex items-center space-x-2 text-emerald-700 font-mono text-xs font-bold uppercase tracking-wider">
+                  <Award className="w-4 h-4" />
+                  <span>PRODUCTIVITY & PROFITABILITY SCORECARD</span>
+                </div>
+                <h2 className="text-lg font-bold text-slate-900 mt-1">
+                  Scorecard Financiero por Operador / Chófer
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Calificación basada en impacto económico real: consumo de diésel vs línea base, carga oportuna de tickets y entregas a tiempo.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 text-xs">
+                <div className="bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 text-center">
+                  <span className="text-[10px] text-slate-400 font-mono block uppercase">Operadores Evaluados</span>
+                  <span className="font-extrabold text-slate-900 font-mono text-base">{drivers.length}</span>
+                </div>
+                <div className="bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200 text-center">
+                  <span className="text-[10px] text-emerald-700 font-mono block uppercase">Score Promedio Flota</span>
+                  <span className="font-extrabold text-emerald-800 font-mono text-base">
+                    {Math.round(drivers.reduce((acc, d) => acc + d.scorecardScore, 0) / (drivers.length || 1))}/100
+                  </span>
+                </div>
+                <div className="bg-slate-900 px-3 py-2 rounded-lg text-white text-center">
+                  <span className="text-[10px] text-slate-400 font-mono block uppercase">Bonos por Pagar</span>
+                  <span className="font-extrabold text-emerald-400 font-mono text-base">
+                    ${drivers.reduce((acc, d) => acc + d.estimatedProductivityBonusMXN, 0).toLocaleString()} MXN
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Drivers Scorecard Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-700">
+                <thead className="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                  <tr>
+                    <th className="p-3">Operador / Licencia</th>
+                    <th className="p-3">Unidad Asignada</th>
+                    <th className="p-3 text-center">Financial Scorecard</th>
+                    <th className="p-3">Rendimiento Diésel vs Base</th>
+                    <th className="p-3 text-center">% Tickets a Tiempo</th>
+                    <th className="p-3 text-center">% Entregas a Tiempo</th>
+                    <th className="p-3 text-right">Bono Productividad Est.</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {drivers.map((drv) => {
+                    const isHigh = drv.scorecardScore >= 95;
+                    const isMed = drv.scorecardScore >= 90;
+
+                    return (
+                      <tr key={drv.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="p-3">
+                          <div className="font-bold text-slate-900">{drv.name}</div>
+                          <div className="text-[10px] text-slate-400 font-mono">{drv.licenseNumber} · {drv.phone}</div>
+                        </td>
+                        <td className="p-3">
+                          <span className="font-bold font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-800">
+                            Unidad {drv.assignedVehicleUnit || 'N/A'}
+                          </span>
+                        </td>
+                        <td className="p-3 text-center">
+                          <span
+                            className={`px-3 py-1 rounded-full font-bold font-mono text-xs inline-flex items-center gap-1 ${
+                              isHigh
+                                ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                                : isMed
+                                ? 'bg-blue-100 text-blue-900 border border-blue-300'
+                                : 'bg-amber-100 text-amber-900 border border-amber-300'
+                            }`}
+                          >
+                            <ShieldCheck className="w-3 h-3" />
+                            {drv.scorecardScore}/100
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <div className="font-bold font-mono text-slate-900">{drv.fuelEfficiencyKmL} km/L</div>
+                          <div
+                            className={`text-[10px] font-bold ${
+                              drv.fuelEfficiencyVsBaselinePercent >= 0 ? 'text-emerald-700' : 'text-rose-600'
+                            }`}
+                          >
+                            {drv.fuelEfficiencyVsBaselinePercent >= 0 ? '+' : ''}
+                            {drv.fuelEfficiencyVsBaselinePercent}% vs promedio
+                          </div>
+                        </td>
+                        <td className="p-3 text-center">
+                          <span className="font-bold font-mono text-slate-900">
+                            {drv.evidenceUploadRatePercent}%
+                          </span>
+                        </td>
+                        <td className="p-3 text-center">
+                          <span className="font-bold font-mono text-slate-900">
+                            {drv.onTimeDeliveryRatePercent}%
+                          </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          <span className="font-bold font-mono text-emerald-700 text-sm">
+                            ${drv.estimatedProductivityBonusMXN.toLocaleString()} MXN
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

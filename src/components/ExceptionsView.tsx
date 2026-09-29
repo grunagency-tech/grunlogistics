@@ -27,11 +27,26 @@ export const ExceptionsView: React.FC = () => {
           {items.map((exc) => (
             <div
               key={exc.id}
-              className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/60 transition-colors"
+              className={`p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors ${
+                exc.type === 'FUEL_THEFT_ALERT'
+                  ? 'bg-rose-50/40 hover:bg-rose-50/70 border-l-4 border-l-rose-600'
+                  : 'hover:bg-slate-50/60'
+              }`}
             >
-              <div className="space-y-1 max-w-xl">
-                <div className="flex items-center space-x-2">
+              <div className="space-y-1.5 max-w-xl">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="font-bold text-slate-900 text-sm">{exc.title}</span>
+                  {exc.type === 'FUEL_THEFT_ALERT' && (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200 flex items-center gap-1">
+                      <ShieldAlert className="w-3 h-3 text-rose-600" />
+                      Robo Hormiga / Extracción
+                    </span>
+                  )}
+                  {exc.type === 'CARTA_PORTE_MISSING' && (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                      SAT Carta Porte 3.1
+                    </span>
+                  )}
                   <span className="text-xs text-slate-400">•</span>
                   <span className="text-xs text-slate-500 font-medium">{exc.createdAt}</span>
                 </div>
@@ -49,12 +64,19 @@ export const ExceptionsView: React.FC = () => {
                   </span>
                 </div>
 
-                {exc.tripId && (
+                {exc.tripId ? (
                   <button
                     onClick={() => openTripDetail(exc.tripId!)}
                     className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors"
                   >
                     Revisar
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setCurrentView('FLEET')}
+                    className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-lg transition-colors"
+                  >
+                    Ver Flota
                   </button>
                 )}
               </div>
