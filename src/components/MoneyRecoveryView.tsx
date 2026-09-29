@@ -149,14 +149,22 @@ export const MoneyRecoveryView: React.FC = () => {
             <strong>Evidencia Registrada: </strong> {selectedCase.evidenceDescription}
           </p>
 
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-200/60">
             <button
               onClick={() => openTripDetail(selectedCase.tripId)}
               className="text-xs text-slate-600 hover:text-slate-900 font-semibold"
             >
               Ver Viaje Completo →
             </button>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <a
+                href="/Carta_Reclamacion_Estadia_5831.pdf"
+                download
+                className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg shadow-xs flex items-center space-x-1.5 transition-colors"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Descargar Carta de Cobro PDF</span>
+              </a>
               <button
                 onClick={() => updateRecoveryStatus(selectedCase.id, 'Approved')}
                 className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-lg"
@@ -165,7 +173,7 @@ export const MoneyRecoveryView: React.FC = () => {
               </button>
               <button
                 onClick={() => updateRecoveryStatus(selectedCase.id, 'Recovered')}
-                className="px-4 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-lg shadow-xs"
+                className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-lg shadow-xs"
               >
                 Marcar como RECUPERADO
               </button>

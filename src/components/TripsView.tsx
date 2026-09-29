@@ -365,12 +365,23 @@ export const TripsView: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={() => openTripDetail(t.id)}
-                        className="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded transition-colors shadow-xs"
-                      >
-                        Ver Detalle
-                      </button>
+                      <div className="flex items-center justify-end space-x-1.5">
+                        <a
+                          href="/Carta_Porte_SAT_3.1_5831.pdf"
+                          download
+                          title="Descargar Representación Impresa Carta Porte 3.1 (PDF)"
+                          className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 text-[11px] font-bold rounded flex items-center space-x-1 transition-colors"
+                        >
+                          <FileText className="w-3 h-3 text-emerald-700" />
+                          <span>PDF</span>
+                        </a>
+                        <button
+                          onClick={() => openTripDetail(t.id)}
+                          className="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded transition-colors shadow-xs"
+                        >
+                          Abrir Viaje
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

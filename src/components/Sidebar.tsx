@@ -48,32 +48,32 @@ export const Sidebar: React.FC = () => {
     {
       title: 'OPERACIÓN',
       items: [
-        { id: 'OVERVIEW', label: 'Overview', icon: LayoutDashboard },
-        { id: 'TRIPS', label: 'Trips', icon: MapPin },
-        { id: 'FLEET', label: 'Fleet', icon: Truck }
+        { id: 'OVERVIEW', label: 'Inicio (Resumen)', icon: LayoutDashboard },
+        { id: 'TRIPS', label: 'Viajes & Despacho', icon: MapPin },
+        { id: 'FLEET', label: 'Flota & Chóferes', icon: Truck }
       ]
     },
     {
-      title: 'FINANZAS',
+      title: 'FINANZAS Y COBRANZA',
       items: [
-        { id: 'PROFITABILITY', label: 'Profitability', icon: TrendingUp },
-        { id: 'MONEY_RECOVERY', label: 'Money Recovery', icon: DollarSign, badge: activeRecoveryCount }
+        { id: 'PROFITABILITY', label: 'Rentabilidad Financiera', icon: TrendingUp },
+        { id: 'MONEY_RECOVERY', label: 'Cobranza & Estadías (PDF)', icon: DollarSign, badge: activeRecoveryCount }
       ]
     },
     {
-      title: 'ANÁLISIS',
+      title: 'ANÁLISIS DE RUTA',
       items: [
-        { id: 'CUSTOMERS', label: 'Customers', icon: Users },
-        { id: 'ROUTES', label: 'Routes', icon: Navigation },
-        { id: 'EXCEPTIONS', label: 'Exceptions', icon: AlertTriangle, badge: pendingExceptionsCount }
+        { id: 'CUSTOMERS', label: 'Clientes', icon: Users },
+        { id: 'ROUTES', label: 'Rutas & Casetas', icon: Navigation },
+        { id: 'EXCEPTIONS', label: 'Alertas de Riesgo', icon: AlertTriangle, badge: pendingExceptionsCount }
       ]
     },
     {
-      title: 'CONFIGURACIÓN',
+      title: 'SISTEMA',
       items: [
-        { id: 'DATA', label: 'Data', icon: Database },
-        { id: 'SETTINGS', label: 'Settings', icon: Settings },
-        { id: 'DRIVER_MOBILE', label: 'App Operador', icon: Smartphone }
+        { id: 'DATA', label: 'Manifiestos & Datos', icon: Database },
+        { id: 'SETTINGS', label: 'Configuración', icon: Settings },
+        { id: 'DRIVER_MOBILE', label: '📱 Modo App Chófer', icon: Smartphone }
       ]
     }
   ];
