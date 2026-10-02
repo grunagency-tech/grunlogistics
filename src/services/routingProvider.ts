@@ -25,35 +25,142 @@ export interface RoutingProvider {
 }
 
 export const PRESET_MEXICAN_HUBS = [
-  'Monterrey, NL (CEDIS Apodaca)',
+  // 1. Aguascalientes
+  'Aguascalientes, AGS (Planta Nissan / PILA)',
+  'CEDIS Aguascalientes (Parque Industrial San Francisco)',
+  // 2. Baja California
+  'Tijuana, BC (Parque Industrial Otay / El Florido)',
+  'Mexicali, BC (Parque Industrial Valle del Sur)',
+  'Ensenada, BC (Zona Portuaria El Sauzal)',
+  // 3. Baja California Sur
+  'La Paz, BCS (Puerto Pichilingue)',
+  'Los Cabos, BCS (Zona Logística San José)',
+  // 4. Campeche
+  'Campeche, CAMP (Parque Industrial Bicentenario)',
+  'Ciudad del Carmen, CAMP (Puerto Pesquero e Industrial)',
+  // 5. Chiapas
+  'Tuxtla Gutiérrez, CHIS (Parque Industrial Chiapas)',
+  'Tapachula, CHIS (Puerto Chiapas / Frontera Suchiate)',
+  // 6. Chihuahua
+  'Cd. Juárez, CHIH (Zona Franca / Intermex)',
+  'Chihuahua, CHIH (Parque Industrial Las Américas)',
+  // 7. Coahuila
+  'Saltillo / Ramos Arizpe, COAH (Parque Industrial)',
+  'Torreón, COAH (Parque Industrial Las Américas)',
+  'Monclova, COAH (Zona Industrial AHMSA)',
+  'Piedras Negras, COAH (Puente Internacional)',
+  // 8. Colima
+  'Manzanillo, COL (Zona Portuaria API Manzanillo)',
+  'Colima, COL (CEDIS Central)',
+  // 9. Ciudad de México
   'Ciudad de México, CDMX (CEDIS Vallejo)',
-  'Querétaro, QRO (Parque Industrial El Marqués)',
-  'Guadalajara, JAL (CEDIS El Salto)',
-  'San Luis Potosí, SLP (Parque Logístico)',
-  'Silao, GTO (Puerto Interior)',
-  'Puebla, PUE (Parque Industrial Finsa)',
-  'CEDIS Tepotzotlán, Edomex',
+  'CDMX (Central de Abasto Iztapalapa)',
+  'CDMX (Terminal Intermodal Pantaco)',
+  // 10. Durango
+  'Durango, DUR (Parque Industrial CLID)',
+  'Gómez Palacio, DUR (Zona Industrial Laguna)',
+  // 11. Estado de México
+  'CEDIS Tepotzotlán, Edomex (AXOPARK)',
+  'Cuautitlán Izcalli, Edomex (CPA Logistics)',
+  'Tultitlán, Edomex (CEDIS Amazon / Mercado Libre)',
+  'San Martín Obispo, Edomex (SMO)',
   'Toluca, Edomex (Parque Industrial Lerma)',
-  'Nuevo Laredo, TAMPS (Puente Internacional)',
-  'Puerto de Veracruz, VER (Zona Portuaria)',
-  'Saltillo / Ramos Arizpe, COAH',
-  'Tijuana, BC (Parque Industrial Otay)',
-  'Cd. Juárez, CHIH (Zona Franca)',
-  'Hermosillo, SON (Planta Ford)',
-  'Torreón, COAH (Zona Industrial)',
-  'Aguascalientes, AGS (Planta Nissan)',
-  'Altamira, TAMPS (Puerto Industrial)',
-  'Manzanillo, COL (Zona Portuaria)',
-  'Celaya, GTO (Nodo Bajío)',
-  'Irapuato, GTO (Parque Apolo)',
-  'León, GTO (Puerto Interior)',
-  'Cuautitlán Izcalli, Edomex',
-  'San Martín Obispo, Edomex',
-  'San Juan del Río, QRO'
+  'Tlalnepantla, Edomex (Barrientos)',
+  // 12. Guanajuato
+  'Silao, GTO (Puerto Interior Guanajuato)',
+  'Celaya, GTO (Nodo Logístico Bajío / Honda)',
+  'Irapuato, GTO (Parque Industrial Apolo)',
+  'León, GTO (Parque Industrial Stiva)',
+  'Salamanca, GTO (Zona RIAMA)',
+  // 13. Guerrero
+  'Acapulco, GRO (Zona Logística Puerto)',
+  'Chilpancingo, GRO (Parque Ocotito)',
+  // 14. Hidalgo
+  'Pachuca / Tula, HGO (Plataforma PLATAH)',
+  'Tepeji del Río, HGO (Parque Tepeji)',
+  // 15. Jalisco
+  'Guadalajara, JAL (CEDIS El Salto)',
+  'Zapopan, JAL (Parque Industrial Belenes)',
+  'Tlaquepaque, JAL (Agroparque Logístico)',
+  // 16. Michoacán
+  'Puerto de Lázaro Cárdenas, MICH (Isla de la Palma)',
+  'Morelia, MICH (Parque Industrial CIMO)',
+  // 17. Morelos
+  'Cuernavaca / Jiutepec, MOR (Parque CIVAC)',
+  // 18. Nayarit
+  'Tepic, NAY (Parque Industrial Nayarit)',
+  // 19. Nuevo León
+  'Monterrey, NL (CEDIS Apodaca / Interpuerto)',
+  'Escobedo, NL (Parque San Martín)',
+  'Santa Catarina, NL (Zona Tesla / GP)',
+  'Pesquería, NL (Complejo KIA / Ternium)',
+  'San Nicolás, NL (Zona Industrial)',
+  // 20. Oaxaca
+  'Oaxaca, OAX (Parque Magdalena Apasco)',
+  'Salina Cruz, OAX (Puerto Interoceánico)',
+  // 21. Puebla
+  'Puebla, PUE (Parque Industrial FINSA / VW)',
+  'San José Chiapa, PUE (Planta Audi)',
+  'Tehuacán, PUE (Zona Industrial)',
+  // 22. Querétaro
+  'Querétaro, QRO (Parque Industrial El Marqués)',
+  'Querétaro, QRO (Parque Industrial Querétaro PIQ)',
+  'Querétaro, QRO (CEDIS Chuchuru / Aeropuerto WTC)',
+  'San Juan del Río, QRO (Parque Benito Juárez)',
+  'Colón, QRO (Aeropark Querétaro)',
+  // 23. Quintana Roo
+  'Cancún, QROO (Central Abasto / Aeropuerto)',
+  'Chetumal, QROO (Zona Franca Subteniente López)',
+  // 24. San Luis Potosí
+  'San Luis Potosí, SLP (Parque WTC / BMW)',
+  'Villa de Reyes, SLP (Parque Tres Naciones)',
+  // 25. Sinaloa
+  'Culiacán, SIN (Parque Industrial La Costeña)',
+  'Mazatlán, SIN (Puerto y Parque Mazatlán)',
+  'Los Mochis, SIN (Zona Topolobampo)',
+  // 26. Sonora
+  'Hermosillo, SON (Parque Industrial Ford / Dynatech)',
+  'Nogales, SON (Parque San Carlos)',
+  'Ciudad Obregón, SON (Parque Piggyback)',
+  // 27. Tabasco
+  'Villahermosa, TAB (Parque Industrial Deza)',
+  'Paraíso / Dos Bocas, TAB (Puerto Refinería)',
+  // 28. Tamaulipas
+  'Nuevo Laredo, TAMPS (Puente Internacional III)',
+  'Reynosa, TAMPS (Parque Villa Florida)',
+  'Matamoros, TAMPS (Parque CIMA)',
+  'Altamira / Tampico, TAMPS (Puerto Altamira)',
+  // 29. Tlaxcala
+  'Tlaxcala / Huamantla, TLAX (Ciudad Industrial)',
+  // 30. Veracruz
+  'Puerto de Veracruz, VER (Zona Portuaria APIVER)',
+  'Coatzacoalcos, VER (Puerto Interoceánico)',
+  'Córdoba / Orizaba, VER (Zona Cuautlapan)',
+  'Poza Rica, VER (Zona Pemex)',
+  // 31. Yucatán
+  'Mérida, YUC (Parque Industrial Hunucmá)',
+  'Puerto Progreso, YUC (Zona Portuaria)',
+  'Mérida, YUC (CEDIS Umán)',
+  // 32. Zacatecas
+  'Zacatecas / Calera, ZAC (Parque Aeropuerto)'
 ];
 
 // Known Mexican Highway Hub Coordinates (Corredor NAFTA 57, Bajío, Norte, Occidente, Sur & Puertos)
 const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullName: string }> = {
+  // Yucatán & Península
+  yucatan: { lat: 20.9674, lng: -89.5926, fullName: 'Mérida, YUC' },
+  yucatán: { lat: 20.9674, lng: -89.5926, fullName: 'Mérida, YUC' },
+  merida: { lat: 20.9674, lng: -89.5926, fullName: 'Mérida, YUC' },
+  mérida: { lat: 20.9674, lng: -89.5926, fullName: 'Mérida, YUC' },
+  progreso: { lat: 21.2833, lng: -89.6667, fullName: 'Puerto Progreso, YUC' },
+  uman: { lat: 20.8819, lng: -89.7461, fullName: 'CEDIS Umán, YUC' },
+  umán: { lat: 20.8819, lng: -89.7461, fullName: 'CEDIS Umán, YUC' },
+  hunucma: { lat: 20.9900, lng: -89.8700, fullName: 'Parque Industrial Hunucmá, YUC' },
+  hunucmá: { lat: 20.9900, lng: -89.8700, fullName: 'Parque Industrial Hunucmá, YUC' },
+  cancun: { lat: 21.1619, lng: -86.8515, fullName: 'Cancún, QROO' },
+  cancún: { lat: 21.1619, lng: -86.8515, fullName: 'Cancún, QROO' },
+  chetumal: { lat: 18.5002, lng: -88.2961, fullName: 'Chetumal, QROO' },
+
   // Querétaro & El Marqués Corridor
   marques: { lat: 20.6270, lng: -100.2840, fullName: 'Parque Industrial El Marqués, QRO' },
   marqués: { lat: 20.6270, lng: -100.2840, fullName: 'Parque Industrial El Marqués, QRO' },
@@ -61,6 +168,8 @@ const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullNam
   querétaro: { lat: 20.6120, lng: -100.4100, fullName: 'Parque Industrial Querétaro, QRO' },
   qro: { lat: 20.6120, lng: -100.4100, fullName: 'Querétaro, QRO' },
   sanjuan: { lat: 20.3880, lng: -99.9960, fullName: 'San Juan del Río, QRO' },
+  colon: { lat: 20.5900, lng: -100.0800, fullName: 'Aeropark Colón, QRO' },
+  colón: { lat: 20.5900, lng: -100.0800, fullName: 'Aeropark Colón, QRO' },
   chuchuru: { lat: 20.5900, lng: -100.3800, fullName: 'CEDIS Chuchuru, QRO' },
 
   // CDMX & Edomex Central Hubs
@@ -68,6 +177,7 @@ const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullNam
   mexico: { lat: 19.4326, lng: -99.1332, fullName: 'Ciudad de México, CDMX' },
   méxico: { lat: 19.4326, lng: -99.1332, fullName: 'Ciudad de México, CDMX' },
   vallejo: { lat: 19.4980, lng: -99.1620, fullName: 'CEDIS Vallejo, CDMX' },
+  pantaco: { lat: 19.4670, lng: -99.1760, fullName: 'Intermodal Pantaco, CDMX' },
   tepotzotlan: { lat: 19.7042, lng: -99.2223, fullName: 'CEDIS Tepotzotlán, Edomex' },
   tepotzotlán: { lat: 19.7042, lng: -99.2223, fullName: 'CEDIS Tepotzotlán, Edomex' },
   cuautitlan: { lat: 19.6780, lng: -99.1760, fullName: 'Cuautitlán Izcalli, Edomex' },
@@ -75,6 +185,7 @@ const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullNam
   tultitlan: { lat: 19.6450, lng: -99.1670, fullName: 'CEDIS Tultitlán, Edomex' },
   tultitlán: { lat: 19.6450, lng: -99.1670, fullName: 'CEDIS Tultitlán, Edomex' },
   sanmartin: { lat: 19.6050, lng: -99.2080, fullName: 'San Martín Obispo, Edomex' },
+  tlalnepantla: { lat: 19.5400, lng: -99.1900, fullName: 'Tlalnepantla, Edomex' },
   toluca: { lat: 19.2826, lng: -99.6557, fullName: 'Toluca, Edomex' },
 
   // Monterrey & NAFTA Corridor
@@ -82,6 +193,8 @@ const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullNam
   mty: { lat: 25.6866, lng: -100.3161, fullName: 'Monterrey, NL' },
   apodaca: { lat: 25.7813, lng: -100.1886, fullName: 'Apodaca Industrial Park, NL' },
   escobedo: { lat: 25.8080, lng: -100.3220, fullName: 'Escobedo Hub, NL' },
+  pesqueria: { lat: 25.7500, lng: -100.0500, fullName: 'Pesquería KIA, NL' },
+  pesquería: { lat: 25.7500, lng: -100.0500, fullName: 'Pesquería KIA, NL' },
   saltillo: { lat: 25.4260, lng: -101.0000, fullName: 'Saltillo / Ramos Arizpe, COAH' },
   laredo: { lat: 27.4864, lng: -99.5080, fullName: 'Nuevo Laredo, TAMPS' },
   reynosa: { lat: 26.0500, lng: -98.2980, fullName: 'Reynosa, TAMPS' },
@@ -91,6 +204,7 @@ const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullNam
   guadalajara: { lat: 20.6597, lng: -103.3496, fullName: 'Guadalajara, JAL' },
   gdl: { lat: 20.6597, lng: -103.3496, fullName: 'Guadalajara, JAL' },
   zapopan: { lat: 20.7200, lng: -103.3900, fullName: 'Zapopan Hub, JAL' },
+  tlaquepaque: { lat: 20.6100, lng: -103.3100, fullName: 'Tlaquepaque, JAL' },
   celaya: { lat: 20.5280, lng: -100.8140, fullName: 'Celaya, GTO' },
   leon: { lat: 21.1250, lng: -101.6860, fullName: 'León, GTO' },
   león: { lat: 21.1250, lng: -101.6860, fullName: 'León, GTO' },
@@ -102,6 +216,7 @@ const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullNam
   // Puebla & Veracruz Port Corridor
   puebla: { lat: 19.0414, lng: -98.2063, fullName: 'Puebla, PUE' },
   veracruz: { lat: 19.1738, lng: -96.1342, fullName: 'Puerto de Veracruz, VER' },
+  coatzacoalcos: { lat: 18.1500, lng: -94.4167, fullName: 'Coatzacoalcos, VER' },
   cordoba: { lat: 18.8840, lng: -96.9250, fullName: 'Córdoba, VER' },
   córdoba: { lat: 18.8840, lng: -96.9250, fullName: 'Córdoba, VER' },
   tijuana: { lat: 32.5149, lng: -117.0382, fullName: 'Tijuana, BC' },
@@ -111,7 +226,11 @@ const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullNam
   torreon: { lat: 25.5428, lng: -103.4068, fullName: 'Torreón, COAH' },
   torreón: { lat: 25.5428, lng: -103.4068, fullName: 'Torreón, COAH' },
   altamira: { lat: 22.2553, lng: -97.8686, fullName: 'Puerto de Altamira, TAMPS' },
-  manzanillo: { lat: 19.0522, lng: -104.3158, fullName: 'Puerto de Manzanillo, COL' }
+  manzanillo: { lat: 19.0522, lng: -104.3158, fullName: 'Puerto de Manzanillo, COL' },
+  tabasco: { lat: 17.9895, lng: -92.9281, fullName: 'Villahermosa, TAB' },
+  villahermosa: { lat: 17.9895, lng: -92.9281, fullName: 'Villahermosa, TAB' },
+  chiapas: { lat: 16.7500, lng: -93.1167, fullName: 'Tuxtla Gutiérrez, CHIS' },
+  oaxaca: { lat: 17.0732, lng: -96.7266, fullName: 'Oaxaca, OAX' }
 };
 
 function getHubCoords(placeName: string): { lat: number; lng: number } {
