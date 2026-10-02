@@ -84,9 +84,10 @@ export const TripDetailView: React.FC = () => {
   const isMarginLeak = marginDiff < 0 && (econ.revenueMXN > 0 ? (Math.abs(marginDiff) / econ.revenueMXN >= 0.05 || ((econ.expectedMarginPercent || 0) - (econ.actualMarginPercent || 0)) >= 5) : false);
 
   const handleSendWhatsapp = () => {
+    const etaText = (trip.eta || '12 hrs').includes('h') ? trip.eta : `${trip.eta} hrs`;
     const msgText =
       whatsappRecipient === 'CLIENT'
-        ? `Estimado ${trip.customerName}, su viaje #${trip.tripNumber} (${trip.originName} → ${trip.destinationName}) va en tránsito. ETA estimado: ${trip.eta} hrs.`
+        ? `Estimado ${trip.customerName}, su viaje #${trip.tripNumber} (${trip.originName} → ${trip.destinationName}) va en tránsito. ETA estimado: ${etaText}.`
         : `${trip.driverName}, recordatorio: Tu cita de entrega en ${trip.destinationName} es a las ${trip.deliveryAppointment} hrs. Recuerda subir foto del sello de seguridad.`;
 
     addOperationalEvent(trip.id, {
@@ -194,6 +195,53 @@ export const TripDetailView: React.FC = () => {
             <div className="text-xs text-slate-400 mt-0.5">
               Cita: {trip.deliveryAppointment} · Unidad {trip.vehicleUnitNumber} ({trip.driverName})
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* GRAPHHOPPER ROUTE METRICS CARD */}
+      <div className="bg-blue-50/80 border border-blue-200 rounded-2xl p-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-sans shadow-xs">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-[#0061FF] text-white flex items-center justify-center shrink-0 shadow-xs">
+            <MapPin className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">Distancia Planificada</span>
+            <span className="text-base font-extrabold font-mono text-slate-900">{trip.plannedDistanceKm || 780} km</span>
+            <span className="text-[10px] text-blue-700 block font-medium">GraphHopper OSM Engine</span>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+            <Clock className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">Tiempo Estimado (ETA)</span>
+            <span className="text-base font-extrabold font-mono text-slate-900">{trip.eta || '12 hrs'}</span>
+            <span className="text-[10px] text-slate-500 block font-medium">Tránsito + Casetas</span>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+            <DollarSign className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">Casetas SCT Est.</span>
+            <span className="text-base font-extrabold font-mono text-slate-900">${econ.estimatedTollsMXN.toLocaleString()} MXN</span>
+            <span className="text-[10px] text-slate-500 block font-medium">Tarifa 5 Ejes SCT</span>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+            <Truck className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">Diésel Requerido</span>
+            <span className="text-base font-extrabold font-mono text-slate-900">{econ.expectedFuelLiters || Math.round((trip.plannedDistanceKm || 780) / 2.7)} L</span>
+            <span className="text-[10px] text-slate-500 block font-medium">Rendimiento: 2.7 km/L</span>
           </div>
         </div>
       </div>
