@@ -32,13 +32,16 @@ export const TripDetailView: React.FC = () => {
   const [whatsappMsgSent, setWhatsappMsgSent] = useState(false);
   const [showClaimReportModal, setShowClaimReportModal] = useState(false);
 
-  if (!trip) {
+  if (!trip || !trip.economics) {
     return (
-      <div className="p-8 text-center space-y-4 font-sans">
-        <h2 className="text-xl font-bold text-slate-800">Viaje no encontrado</h2>
+      <div className="p-8 text-center space-y-4 font-sans max-w-md mx-auto my-12 bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900">Cargando detalles del viaje...</h2>
+        <p className="text-xs text-slate-500">
+          El viaje seleccionado está inicializando su expediente de la Carta Porte SAT 3.1.
+        </p>
         <button
           onClick={() => setCurrentView('TRIPS')}
-          className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg"
+          className="px-4 py-2 bg-[#0061FF] hover:bg-[#0052D4] text-white text-xs font-bold rounded-xl shadow-xs"
         >
           Volver a lista de viajes
         </button>
@@ -46,15 +49,39 @@ export const TripDetailView: React.FC = () => {
     );
   }
 
-  const existingCase = recoveryCases.find((c) => c.tripId === trip?.id);
+  const existingCase = (recoveryCases || []).find((c) => c.tripId === trip.id);
 
-  const econ = trip.economics;
-  const marginDiff = econ.actualMarginMXN - econ.expectedMarginMXN;
-  const fuelDiff = econ.actualFuelMXN - econ.estimatedFuelMXN;
-  const tollsDiff = econ.actualTollsMXN - econ.estimatedTollsMXN;
-  const excessMinutes = Math.max(0, trip.waitingMinutes - trip.allowedWaitingMinutes);
+  const econ = trip.economics || {
+    revenueMXN: 0,
+    estimatedFuelMXN: 0,
+    estimatedTollsMXN: 0,
+    estimatedDriverPayMXN: 0,
+    estimatedOtherMXN: 0,
+    totalEstimatedCostMXN: 0,
+    expectedMarginMXN: 0,
+    expectedMarginPercent: 0,
+    expectedDistanceKm: 0,
+    expectedFuelLiters: 0,
+    expectedTollsMXN: 0,
+    actualFuelMXN: 0,
+    actualTollsMXN: 0,
+    actualDriverPayMXN: 0,
+    actualOtherMXN: 0,
+    totalActualCostMXN: 0,
+    actualMarginMXN: 0,
+    actualMarginPercent: 0,
+    costVarianceMXN: 0,
+    marginVarianceMXN: 0,
+    breakEvenRevenueMXN: 0,
+    marginBufferMXN: 0
+  };
+
+  const marginDiff = (econ.actualMarginMXN || 0) - (econ.expectedMarginMXN || 0);
+  const fuelDiff = (econ.actualFuelMXN || 0) - (econ.estimatedFuelMXN || 0);
+  const tollsDiff = (econ.actualTollsMXN || 0) - (econ.estimatedTollsMXN || 0);
+  const excessMinutes = Math.max(0, (trip.waitingMinutes || 0) - (trip.allowedWaitingMinutes || 30));
   const waitingCostEst = Math.round((excessMinutes / 60) * 450);
-  const isMarginLeak = marginDiff < 0 && (econ.revenueMXN > 0 ? (Math.abs(marginDiff) / econ.revenueMXN >= 0.05 || (econ.expectedMarginPercent - econ.actualMarginPercent) >= 5) : false);
+  const isMarginLeak = marginDiff < 0 && (econ.revenueMXN > 0 ? (Math.abs(marginDiff) / econ.revenueMXN >= 0.05 || ((econ.expectedMarginPercent || 0) - (econ.actualMarginPercent || 0)) >= 5) : false);
 
   const handleSendWhatsapp = () => {
     const msgText =
