@@ -267,6 +267,13 @@ export class GoogleRoutesProvider implements RoutingProvider {
 }
 
 const CORRIDOR_EXACT_HIGHWAY_KM: Record<string, { distanceKm: number; tollsMXN: number }> = {
+  // Trans-Oceanic Pacific <-> Gulf Port Corridors
+  'manzanillo-veracruz': { distanceKm: 1179, tollsMXN: 4120 },
+  'veracruz-manzanillo': { distanceKm: 1179, tollsMXN: 4120 },
+  'lazaro-veracruz': { distanceKm: 895, tollsMXN: 3100 },
+  'veracruz-lazaro': { distanceKm: 895, tollsMXN: 3100 },
+
+  // NAFTA & Central Corridors
   'puebla-guadalajara': { distanceKm: 664, tollsMXN: 2280 },
   'guadalajara-puebla': { distanceKm: 664, tollsMXN: 2280 },
   'monterrey-cdmx': { distanceKm: 905, tollsMXN: 3200 },
@@ -284,7 +291,17 @@ const CORRIDOR_EXACT_HIGHWAY_KM: Record<string, { distanceKm: number; tollsMXN: 
   'sanluis-monterrey': { distanceKm: 520, tollsMXN: 1950 },
   'monterrey-sanluis': { distanceKm: 520, tollsMXN: 1950 },
   'puebla-veracruz': { distanceKm: 280, tollsMXN: 1100 },
-  'veracruz-puebla': { distanceKm: 280, tollsMXN: 1100 }
+  'veracruz-puebla': { distanceKm: 280, tollsMXN: 1100 },
+
+  // Border & Far North Corridors
+  'tijuana-cdmx': { distanceKm: 2780, tollsMXN: 9400 },
+  'cdmx-tijuana': { distanceKm: 2780, tollsMXN: 9400 },
+  'juarez-cdmx': { distanceKm: 1810, tollsMXN: 6300 },
+  'cdmx-juarez': { distanceKm: 1810, tollsMXN: 6300 },
+  'hermosillo-guadalajara': { distanceKm: 1480, tollsMXN: 5150 },
+  'guadalajara-hermosillo': { distanceKm: 1480, tollsMXN: 5150 },
+  'merida-cdmx': { distanceKm: 1320, tollsMXN: 4600 },
+  'cdmx-merida': { distanceKm: 1320, tollsMXN: 4600 }
 };
 
 export class GraphHopperRoutingProvider implements RoutingProvider {
@@ -319,7 +336,9 @@ export class GraphHopperRoutingProvider implements RoutingProvider {
         distanceKm = 0;
         estimatedTollsMXN = 0;
       } else {
-        const roadFactor = directKm > 400 ? 1.18 : 1.20;
+        // Coast-to-Coast Pacific to Gulf detour classification (requires crossing Sierra Madre / Trans-Volcanic Belt)
+        const isTransOceanic = (originCoords.lng <= -102.0 && destCoords.lng >= -97.0) || (originCoords.lng >= -97.0 && destCoords.lng <= -102.0);
+        const roadFactor = isTransOceanic ? 1.365 : (directKm > 400 ? 1.18 : 1.20);
         distanceKm = Math.round(directKm * roadFactor);
         estimatedTollsMXN = Math.round(distanceKm * 3.42);
       }
