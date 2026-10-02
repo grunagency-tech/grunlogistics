@@ -17,12 +17,14 @@ import {
   Award,
   ShieldCheck,
   Activity,
-  Cpu
+  Cpu,
+  ClipboardCheck,
+  FileCheck
 } from 'lucide-react';
 
 export const FleetView: React.FC = () => {
   const { vehicles, drivers, openTripDetail } = useApp();
-  const [activeTab, setActiveTab] = useState<'LIST' | 'MAP' | 'SCORECARD'>('LIST');
+  const [activeTab, setActiveTab] = useState<'LIST' | 'MAP' | 'SCORECARD' | 'FLEETOPS_MAINTENANCE'>('LIST');
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('VEH-184');
 
   const selectedVehicle = vehicles.find((v) => v.id === selectedVehicleId) || vehicles[0];
@@ -38,12 +40,12 @@ export const FleetView: React.FC = () => {
             Vista de Flota (Fleet View & Vehicle Economics)
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Estado operativo, ubicación real, economía por unidad y Scorecard Financiero de Operadores
+            Estado operativo, ubicación real, economía por unidad, DVIR y Scorecard de Operadores
           </p>
         </div>
 
-        {/* Tab Toggle: List vs Map vs Scorecard */}
-        <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-semibold">
+        {/* Tab Toggle: List vs Scorecard vs DVIR Maintenance vs Map */}
+        <div className="flex flex-wrap items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-semibold gap-1">
           <button
             onClick={() => setActiveTab('LIST')}
             className={`px-3 py-1.5 rounded-md transition-all flex items-center space-x-1.5 ${
@@ -65,6 +67,17 @@ export const FleetView: React.FC = () => {
           >
             <UserCheck className="w-3.5 h-3.5" />
             <span>Scorecard Chóferes</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('FLEETOPS_MAINTENANCE')}
+            className={`px-3 py-1.5 rounded-md transition-all flex items-center space-x-1.5 ${
+              activeTab === 'FLEETOPS_MAINTENANCE'
+                ? 'bg-white text-slate-900 shadow-xs font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <ClipboardCheck className="w-3.5 h-3.5 text-emerald-700" />
+            <span>DVIR & Mantenimiento</span>
           </button>
           <button
             onClick={() => setActiveTab('MAP')}
@@ -484,6 +497,120 @@ export const FleetView: React.FC = () => {
                   })}
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      ) : activeTab === 'FLEETOPS_MAINTENANCE' ? (
+        /* FletOps DVIR & Maintenance Hub */
+        <div className="space-y-6 font-sans">
+          {/* Top Banner DVIR */}
+          <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-xl border border-slate-700 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <div className="flex items-center space-x-2">
+                <ClipboardCheck className="w-5 h-5 text-emerald-400" />
+                <h2 className="text-base font-bold">Módulo de Inspección DVIR & Salud Mecánica de Flota (FletOps Engine)</h2>
+              </div>
+              <p className="text-xs text-slate-300 mt-1">
+                Inspecciones digitales pre-viaje de 10 puntos, semáforo de mantenimiento preventivo y lectura de fallas OBD-II Samsara.
+              </p>
+            </div>
+            <button
+              onClick={() => alert('Inspección DVIR registrada exitosamente para la Unidad ' + selectedVehicle.unitNumber + '. Estatus: APROBADO 100%.')}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-sm flex items-center space-x-2 shrink-0 transition-colors"
+            >
+              <FileCheck className="w-4 h-4" />
+              <span>+ Registrar Inspección DVIR (1-Clic)</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* DVIR Checklist 10-Points (2 Cols) */}
+            <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200/80 p-5 space-y-4 shadow-xs">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Inspección Pre-Viaje DVIR (Unidad {selectedVehicle.unitNumber})
+                  </h3>
+                  <p className="text-xs text-slate-500">Última revisión: Hoy 06:45 AM por Chófer: {selectedVehicle.driverName || 'Operador Asignado'}</p>
+                </div>
+                <span className="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-300 flex items-center space-x-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>APROBADO PARA RUTA</span>
+                </span>
+              </div>
+
+              {/* 10-Point Checklist Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                {[
+                  { title: '1. Presión de Neumáticos (110 PSI)', status: 'OK', desc: 'Sin ponchaduras o desgaste irregular' },
+                  { title: '2. Sistema de Frenos de Aire', status: 'OK', desc: 'Presión en tanque 120 PSI, sin fugas' },
+                  { title: '3. Luces & Direccionales', status: 'OK', desc: 'Faros, stop y estrobos 100% operativos' },
+                  { title: '4. Nivel de Aceite Motor Cummins', status: 'OK', desc: 'Varilla en nivel óptimo de viscosidad' },
+                  { title: '5. Quinta Rueda & Perno Rey', status: 'OK', desc: 'Enganche seguro y lubricado con grasa' },
+                  { title: '6. Tanque Diésel (Medición Telematics)', status: 'OK', desc: `${samsaraTelemetry.fuelPercentage}% capacidad (${samsaraTelemetry.fuelLiters} Litros)` },
+                  { title: '7. Kit de Seguridad NOM-068', status: 'OK', desc: 'Extintor vigente, triangs de emergencia' },
+                  { title: '8. Espejos & Parabrisas', status: 'OK', desc: 'Sin grietas, visibilidad despejada' },
+                  { title: '9. Compliancia Carta Porte SAT 3.1', status: 'OK', desc: 'QR Timbrado disponible en app chófer' },
+                  { title: '10. Suspensión & Amortiguadores', status: 'OK', desc: 'Bolsas de aire firmes sin fisuras' }
+                ].map((item, idx) => (
+                  <div key={idx} className="p-3 bg-slate-50 rounded-lg border border-slate-200/80 flex items-start space-x-3">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-bold text-slate-900">{item.title}</div>
+                      <div className="text-[11px] text-slate-500 mt-0.5">{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Samsara OBD-II Health & Maintenance Schedule (1 Col) */}
+            <div className="bg-white rounded-xl border border-slate-200/80 p-5 space-y-4 shadow-xs">
+              <div className="border-b border-slate-100 pb-3">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
+                  <Cpu className="w-4 h-4 text-emerald-700" />
+                  <span>Telemetría Samsara & Diagnóstico</span>
+                </h3>
+                <p className="text-xs text-slate-500">Lectura directa de sensor puerto J1939 / OBD-II</p>
+              </div>
+
+              <div className="space-y-3 text-xs font-mono">
+                <div className="p-3 bg-slate-900 text-white rounded-lg flex justify-between items-center">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block uppercase">Odómetro Actual</span>
+                    <span className="font-bold text-sm">284,520 KM</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-400 block uppercase">Voltaje 24V</span>
+                    <span className="font-bold text-emerald-400">{samsaraTelemetry.batteryVolts}V (Óptimo)</span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+                  <div className="flex justify-between items-center text-slate-800 font-sans">
+                    <span className="font-bold">Códigos de Falla (DTC)</span>
+                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-900 text-[10px] font-bold rounded">
+                      0 FALLAS CRÍTICAS
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 font-sans">
+                    Samsara OBD-II no reporta anomalías electrónicas en motor, inyectores o transmisión Eaton Fuller.
+                  </p>
+                </div>
+
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg space-y-1.5 font-sans">
+                  <div className="flex justify-between items-center font-bold text-amber-900 text-xs">
+                    <span className="flex items-center space-x-1">
+                      <Wrench className="w-3.5 h-3.5" />
+                      <span>Próximo Servicio Preventivo</span>
+                    </span>
+                    <span>1,480 KM</span>
+                  </div>
+                  <p className="text-[11px] text-amber-800">
+                    Cambio de aceite sintético 15W40, filtro de combustible y calibración de balatas programado al completar 286,000 KM.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
