@@ -37,6 +37,7 @@ export type ViewType =
   | 'ROUTES'
   | 'DATA'
   | 'SETTINGS'
+  | 'DOCUMENTS'
   | 'DRIVER_MOBILE';
 
 interface AppContextType {

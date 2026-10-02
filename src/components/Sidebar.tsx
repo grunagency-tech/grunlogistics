@@ -14,7 +14,8 @@ import {
   Smartphone,
   ChevronLeft,
   ChevronRight,
-  X
+  X,
+  Folder
 } from 'lucide-react';
 
 interface NavGroup {
@@ -71,6 +72,7 @@ export const Sidebar: React.FC = () => {
     {
       title: 'SISTEMA',
       items: [
+        { id: 'DOCUMENTS', label: '🗂️ Bóveda de Documentos', icon: Folder },
         { id: 'DATA', label: 'Manifiestos & Datos', icon: Database },
         { id: 'SETTINGS', label: 'Configuración', icon: Settings },
         { id: 'DRIVER_MOBILE', label: '📱 Modo App Chófer', icon: Smartphone }

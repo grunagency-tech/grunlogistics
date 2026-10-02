@@ -13,6 +13,7 @@ import { CustomersView } from './components/CustomersView';
 import { RoutesView } from './components/RoutesView';
 import { DataView } from './components/DataView';
 import { SettingsView } from './components/SettingsView';
+import { DocumentsVaultView } from './components/DocumentsVaultView';
 import { DriverMobileView } from './components/DriverMobileView';
 
 export const AppContent: React.FC = () => {
@@ -45,6 +46,8 @@ export const AppContent: React.FC = () => {
         return <RoutesView />;
       case 'DATA':
         return <DataView />;
+      case 'DOCUMENTS':
+        return <DocumentsVaultView />;
       case 'SETTINGS':
         return <SettingsView />;
       default:
