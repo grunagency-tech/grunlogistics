@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Trip } from '../types';
-import { X, Truck, ShieldCheck, DollarSign, MapPin, Package, Calendar } from 'lucide-react';
+import { getRoutingProvider } from '../services/routingProvider';
+import { X, Truck, ShieldCheck, DollarSign, MapPin, Package, Calendar, Navigation, RefreshCw, Sparkles } from 'lucide-react';
 
 interface NewTripModalProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ interface NewTripModalProps {
 }
 
 export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) => {
-  const { customers, vehicles, drivers, addTrip, openTripDetail } = useApp();
+  const { customers, vehicles, drivers, addTrip, openTripDetail, routingProviderType, googleApiKey } = useApp();
 
   const [customerId, setCustomerId] = useState(customers[0]?.id || '');
   const [originName, setOriginName] = useState('Monterrey, NL');
@@ -20,6 +21,35 @@ export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) =
   const [revenueMXN, setRevenueMXN] = useState<number>(32000);
   const [vehicleId, setVehicleId] = useState(vehicles[0]?.id || '');
   const [driverId, setDriverId] = useState(drivers[0]?.id || '');
+  const [isCalculatingRoute, setIsCalculatingRoute] = useState(false);
+  const [routeCalculated, setRouteCalculated] = useState(false);
+  const [estimatedTolls, setEstimatedTolls] = useState<number>(2652);
+
+  const handleRecalculateRoute = async (origin = originName, dest = destinationName) => {
+    setIsCalculatingRoute(true);
+    try {
+      const provider = getRoutingProvider(routingProviderType, googleApiKey);
+      const res = await provider.calculateRoute({
+        origin,
+        destination: dest,
+        vehicleType: 'Tractor Camión',
+        weightKg: cargoWeightKg
+      });
+      setDistanceKm(res.distanceKm);
+      setEstimatedTolls(res.estimatedTollsMXN);
+      setRouteCalculated(true);
+    } catch (e) {
+      console.warn('Error calculating route with GraphHopper', e);
+    } finally {
+      setIsCalculatingRoute(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      handleRecalculateRoute(originName, destinationName);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -34,7 +64,7 @@ export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) =
   // Automatic baseline cost calculations
   const expectedFuelLiters = Math.round(distanceKm / (selectedVehicle.expectedFuelEfficiencyKmL || 2.7));
   const estimatedFuelMXN = Math.round(expectedFuelLiters * 24.50); // $24.50 MXN per liter
-  const estimatedTollsMXN = Math.round(distanceKm * 3.40); // Avg toll cost/km
+  const estimatedTollsMXN = estimatedTolls || Math.round(distanceKm * 3.40); // Avg toll cost/km
   const estimatedDriverPayMXN = selectedDriver.payModel === 'FIXED_TRIP' ? (selectedDriver.payRateAmount || 2100) : Math.round(distanceKm * 2.2);
   const estimatedOtherMXN = 800; // Permits & logistics allocation
 
@@ -250,9 +280,21 @@ export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) =
 
           {/* Section 2: Origin & Destination */}
           <div className="space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">
-              2. Origen y Destino de Ruta
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">
+                2. Origen y Destino de Ruta
+              </h3>
+              <button
+                type="button"
+                onClick={() => handleRecalculateRoute(originName, destinationName)}
+                disabled={isCalculatingRoute}
+                className="px-2.5 py-1 bg-[#0061FF] hover:bg-[#0052D4] text-white text-[11px] font-bold rounded-lg transition-all flex items-center space-x-1 shadow-xs"
+              >
+                <RefreshCw className={`w-3 h-3 ${isCalculatingRoute ? 'animate-spin' : ''}`} />
+                <span>{isCalculatingRoute ? 'Calculando con GraphHopper...' : '⚡ Recalcular con GraphHopper'}</span>
+              </button>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
                 <label className="block text-slate-600 font-semibold mb-1">Origen (Remitente) *</label>
@@ -260,6 +302,7 @@ export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) =
                   type="text"
                   value={originName}
                   onChange={(e) => setOriginName(e.target.value)}
+                  onBlur={() => handleRecalculateRoute(originName, destinationName)}
                   required
                   className="w-full p-2.5 rounded-lg border border-slate-300"
                 />
@@ -270,11 +313,24 @@ export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) =
                   type="text"
                   value={destinationName}
                   onChange={(e) => setDestinationName(e.target.value)}
+                  onBlur={() => handleRecalculateRoute(originName, destinationName)}
                   required
                   className="w-full p-2.5 rounded-lg border border-slate-300"
                 />
               </div>
             </div>
+
+            {routeCalculated && (
+              <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between text-xs text-blue-900">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <Navigation className="w-3.5 h-3.5 text-[#0061FF]" />
+                  <span>Cálculo GraphHopper OSM: <strong className="font-mono">{distanceKm} km</strong> estimados</span>
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 bg-blue-100 text-[#0061FF] rounded font-mono">
+                  Casetas SCT: ${estimatedTolls.toLocaleString()} MXN
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Section 3: Asset Assignment */}
