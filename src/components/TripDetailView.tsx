@@ -27,13 +27,32 @@ export const TripDetailView: React.FC = () => {
     addOperationalEvent
   } = useApp();
 
-  // Dynamic Profitability Engine & Leakage Detector (Misión 2)
+  const [showWhatsappModal, setShowWhatsappModal] = useState(false);
+  const [whatsappRecipient, setWhatsappRecipient] = useState<'CLIENT' | 'DRIVER'>('CLIENT');
+  const [whatsappMsgSent, setWhatsappMsgSent] = useState(false);
+  const [showClaimReportModal, setShowClaimReportModal] = useState(false);
+
+  if (!trip) {
+    return (
+      <div className="p-8 text-center space-y-4 font-sans">
+        <h2 className="text-xl font-bold text-slate-800">Viaje no encontrado</h2>
+        <button
+          onClick={() => setCurrentView('TRIPS')}
+          className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg"
+        >
+          Volver a lista de viajes
+        </button>
+      </div>
+    );
+  }
+
+  const econ = trip.economics;
+  const marginDiff = econ.actualMarginMXN - econ.expectedMarginMXN;
   const fuelDiff = econ.actualFuelMXN - econ.estimatedFuelMXN;
   const tollsDiff = econ.actualTollsMXN - econ.estimatedTollsMXN;
   const excessMinutes = Math.max(0, trip.waitingMinutes - trip.allowedWaitingMinutes);
   const waitingCostEst = Math.round((excessMinutes / 60) * 450);
-  const isMarginLeak = marginDiff < 0 && (Math.abs(marginDiff) / econ.revenueMXN >= 0.05 || (econ.expectedMarginPercent - econ.actualMarginPercent) >= 5);
-  const [showClaimReportModal, setShowClaimReportModal] = useState(false);
+  const isMarginLeak = marginDiff < 0 && (econ.revenueMXN > 0 ? (Math.abs(marginDiff) / econ.revenueMXN >= 0.05 || (econ.expectedMarginPercent - econ.actualMarginPercent) >= 5) : false);
 
   const handleSendWhatsapp = () => {
     const msgText =
