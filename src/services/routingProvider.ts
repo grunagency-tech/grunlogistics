@@ -386,6 +386,20 @@ export class GoogleRoutesProvider implements RoutingProvider {
 }
 
 const CORRIDOR_EXACT_HIGHWAY_KM: Record<string, { distanceKm: number; tollsMXN: number }> = {
+  // North <-> South & Bajío Corridors
+  'torreon-morelia': { distanceKm: 907, tollsMXN: 3100 },
+  'morelia-torreon': { distanceKm: 907, tollsMXN: 3100 },
+  'torreon-cdmx': { distanceKm: 1010, tollsMXN: 3500 },
+  'cdmx-torreon': { distanceKm: 1010, tollsMXN: 3500 },
+  'torreon-guadalajara': { distanceKm: 696, tollsMXN: 2450 },
+  'guadalajara-torreon': { distanceKm: 696, tollsMXN: 2450 },
+  'saltillo-cdmx': { distanceKm: 840, tollsMXN: 2950 },
+  'cdmx-saltillo': { distanceKm: 840, tollsMXN: 2950 },
+  'durango-cdmx': { distanceKm: 890, tollsMXN: 3100 },
+  'cdmx-durango': { distanceKm: 890, tollsMXN: 3100 },
+  'chihuahua-cdmx': { distanceKm: 1440, tollsMXN: 5000 },
+  'cdmx-chihuahua': { distanceKm: 1440, tollsMXN: 5000 },
+
   // Trans-Oceanic Pacific <-> Gulf Port Corridors
   'manzanillo-veracruz': { distanceKm: 1179, tollsMXN: 4120 },
   'veracruz-manzanillo': { distanceKm: 1179, tollsMXN: 4120 },
@@ -457,7 +471,10 @@ export class GraphHopperRoutingProvider implements RoutingProvider {
       } else {
         // Coast-to-Coast Pacific to Gulf detour classification (requires crossing Sierra Madre / Trans-Volcanic Belt)
         const isTransOceanic = (originCoords.lng <= -102.0 && destCoords.lng >= -97.0) || (originCoords.lng >= -97.0 && destCoords.lng <= -102.0);
-        const roadFactor = isTransOceanic ? 1.365 : (directKm > 400 ? 1.18 : 1.20);
+        // North-to-South long-haul truck detour classification (latitude delta >= 3.5 degrees)
+        const isNorthSouthLongHaul = Math.abs(originCoords.lat - destCoords.lat) >= 3.5;
+
+        const roadFactor = isTransOceanic ? 1.365 : (isNorthSouthLongHaul ? 1.318 : (directKm > 400 ? 1.18 : 1.20));
         distanceKm = Math.round(directKm * roadFactor);
         estimatedTollsMXN = Math.round(distanceKm * 3.42);
       }
