@@ -187,7 +187,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsMobileMenuOpen(false);
   };
 
-  const activeSelectedTrip = trips.find((t) => t.id === selectedTripId) || trips[0];
+  const rawActiveTrip = trips.find((t) => t.id === selectedTripId) || trips[0] || initialTrips[0];
+  const activeSelectedTrip: Trip = {
+    ...rawActiveTrip,
+    economics: rawActiveTrip.economics || initialTrips[0].economics,
+    events: rawActiveTrip.events || [],
+    fuelTransactions: rawActiveTrip.fuelTransactions || [],
+    costs: rawActiveTrip.costs || []
+  };
 
   const addTrip = (newTrip: Trip) => {
     setTrips((prev) => [newTrip, ...prev]);
