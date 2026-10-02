@@ -24,6 +24,34 @@ export interface RoutingProvider {
   calculateDuration(origin: string, destination: string): Promise<number>;
 }
 
+export const PRESET_MEXICAN_HUBS = [
+  'Monterrey, NL (CEDIS Apodaca)',
+  'Ciudad de México, CDMX (CEDIS Vallejo)',
+  'Querétaro, QRO (Parque Industrial El Marqués)',
+  'Guadalajara, JAL (CEDIS El Salto)',
+  'San Luis Potosí, SLP (Parque Logístico)',
+  'Silao, GTO (Puerto Interior)',
+  'Puebla, PUE (Parque Industrial Finsa)',
+  'CEDIS Tepotzotlán, Edomex',
+  'Toluca, Edomex (Parque Industrial Lerma)',
+  'Nuevo Laredo, TAMPS (Puente Internacional)',
+  'Puerto de Veracruz, VER (Zona Portuaria)',
+  'Saltillo / Ramos Arizpe, COAH',
+  'Tijuana, BC (Parque Industrial Otay)',
+  'Cd. Juárez, CHIH (Zona Franca)',
+  'Hermosillo, SON (Planta Ford)',
+  'Torreón, COAH (Zona Industrial)',
+  'Aguascalientes, AGS (Planta Nissan)',
+  'Altamira, TAMPS (Puerto Industrial)',
+  'Manzanillo, COL (Zona Portuaria)',
+  'Celaya, GTO (Nodo Bajío)',
+  'Irapuato, GTO (Parque Apolo)',
+  'León, GTO (Puerto Interior)',
+  'Cuautitlán Izcalli, Edomex',
+  'San Martín Obispo, Edomex',
+  'San Juan del Río, QRO'
+];
+
 // Known Mexican Highway Hub Coordinates (Corredor NAFTA 57, Bajío, Norte, Occidente, Sur & Puertos)
 const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullName: string }> = {
   // Querétaro & El Marqués Corridor
@@ -75,7 +103,15 @@ const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullNam
   puebla: { lat: 19.0414, lng: -98.2063, fullName: 'Puebla, PUE' },
   veracruz: { lat: 19.1738, lng: -96.1342, fullName: 'Puerto de Veracruz, VER' },
   cordoba: { lat: 18.8840, lng: -96.9250, fullName: 'Córdoba, VER' },
-  córdoba: { lat: 18.8840, lng: -96.9250, fullName: 'Córdoba, VER' }
+  córdoba: { lat: 18.8840, lng: -96.9250, fullName: 'Córdoba, VER' },
+  tijuana: { lat: 32.5149, lng: -117.0382, fullName: 'Tijuana, BC' },
+  juarez: { lat: 31.6904, lng: -106.4245, fullName: 'Cd. Juárez, CHIH' },
+  juárez: { lat: 31.6904, lng: -106.4245, fullName: 'Cd. Juárez, CHIH' },
+  hermosillo: { lat: 29.0729, lng: -110.9559, fullName: 'Hermosillo, SON' },
+  torreon: { lat: 25.5428, lng: -103.4068, fullName: 'Torreón, COAH' },
+  torreón: { lat: 25.5428, lng: -103.4068, fullName: 'Torreón, COAH' },
+  altamira: { lat: 22.2553, lng: -97.8686, fullName: 'Puerto de Altamira, TAMPS' },
+  manzanillo: { lat: 19.0522, lng: -104.3158, fullName: 'Puerto de Manzanillo, COL' }
 };
 
 function getHubCoords(placeName: string): { lat: number; lng: number } {

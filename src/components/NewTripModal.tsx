@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Trip } from '../types';
-import { getRoutingProvider } from '../services/routingProvider';
-import { X, Truck, ShieldCheck, DollarSign, MapPin, Package, Calendar, Navigation, RefreshCw, Sparkles } from 'lucide-react';
+import { getRoutingProvider, PRESET_MEXICAN_HUBS } from '../services/routingProvider';
+import { X, Truck, ShieldCheck, DollarSign, MapPin, Package, Calendar, Navigation, RefreshCw, Sparkles, AlertCircle } from 'lucide-react';
 
 interface NewTripModalProps {
   isOpen: boolean;
@@ -295,32 +295,49 @@ export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) =
               </button>
             </div>
 
+            <datalist id="mexican-hubs-list">
+              {PRESET_MEXICAN_HUBS.map((hub, idx) => (
+                <option key={idx} value={hub} />
+              ))}
+            </datalist>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div>
                 <label className="block text-slate-600 font-semibold mb-1">Origen (Remitente) *</label>
                 <input
                   type="text"
+                  list="mexican-hubs-list"
                   value={originName}
                   onChange={(e) => setOriginName(e.target.value)}
                   onBlur={() => handleRecalculateRoute(originName, destinationName)}
                   required
-                  className="w-full p-2.5 rounded-lg border border-slate-300"
+                  placeholder="Selecciona o escribe el origen..."
+                  className="w-full p-2.5 rounded-lg border border-slate-300 font-medium focus:ring-2 focus:ring-[#0061FF]"
                 />
               </div>
               <div>
                 <label className="block text-slate-600 font-semibold mb-1">Destino (CEDIS / Cliente) *</label>
                 <input
                   type="text"
+                  list="mexican-hubs-list"
                   value={destinationName}
                   onChange={(e) => setDestinationName(e.target.value)}
                   onBlur={() => handleRecalculateRoute(originName, destinationName)}
                   required
-                  className="w-full p-2.5 rounded-lg border border-slate-300"
+                  placeholder="Selecciona o escribe el destino..."
+                  className="w-full p-2.5 rounded-lg border border-slate-300 font-medium focus:ring-2 focus:ring-[#0061FF]"
                 />
               </div>
             </div>
 
-            {routeCalculated && (
+            {originName.trim().toLowerCase() === destinationName.trim().toLowerCase() && originName.length > 0 && (
+              <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg flex items-center space-x-2 text-xs text-amber-900 font-medium">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>Advertencia: El origen y el destino son idénticos. Selecciona ubicaciones distintas para calcular el flete de carretera.</span>
+              </div>
+            )}
+
+            {routeCalculated && originName.trim().toLowerCase() !== destinationName.trim().toLowerCase() && (
               <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between text-xs text-blue-900">
                 <span className="flex items-center gap-1.5 font-medium">
                   <Navigation className="w-3.5 h-3.5 text-[#0061FF]" />

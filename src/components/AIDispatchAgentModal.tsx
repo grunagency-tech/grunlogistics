@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Trip } from '../types';
-import { getRoutingProvider } from '../services/routingProvider';
-import { Bot, Sparkles, CheckCircle2, Truck, UserCheck, ShieldCheck, Zap, X, MapPin, Navigation, RefreshCw } from 'lucide-react';
+import { getRoutingProvider, PRESET_MEXICAN_HUBS } from '../services/routingProvider';
+import { Bot, Sparkles, CheckCircle2, Truck, UserCheck, ShieldCheck, Zap, X, MapPin, Navigation, RefreshCw, AlertCircle } from 'lucide-react';
 
 interface AIDispatchAgentModalProps {
   isOpen: boolean;
@@ -264,30 +264,45 @@ export const AIDispatchAgentModal: React.FC<AIDispatchAgentModalProps> = ({ isOp
               <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block font-mono">
                 1. Especificar Origen, Destino y Parámetros
               </span>
+              <datalist id="ai-mexican-hubs-list">
+                {PRESET_MEXICAN_HUBS.map((hub, idx) => (
+                  <option key={idx} value={hub} />
+                ))}
+              </datalist>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-slate-600 font-semibold mb-1">Origen (Remitente) *</label>
                   <input
                     type="text"
+                    list="ai-mexican-hubs-list"
                     value={originName}
                     onChange={(e) => setOriginName(e.target.value)}
                     onBlur={() => handleCalculateGraphHopper(originName, destinationName)}
-                    className="w-full p-2 rounded-lg border border-slate-300 bg-white font-medium"
-                    placeholder="ej. Monterrey, NL"
+                    className="w-full p-2 rounded-lg border border-slate-300 bg-white font-medium focus:ring-2 focus:ring-[#0061FF]"
+                    placeholder="Selecciona o escribe el origen..."
                   />
                 </div>
                 <div>
                   <label className="block text-slate-600 font-semibold mb-1">Destino (CEDIS / Cliente) *</label>
                   <input
                     type="text"
+                    list="ai-mexican-hubs-list"
                     value={destinationName}
                     onChange={(e) => setDestinationName(e.target.value)}
                     onBlur={() => handleCalculateGraphHopper(originName, destinationName)}
-                    className="w-full p-2 rounded-lg border border-slate-300 bg-white font-medium"
-                    placeholder="ej. Guadalajara, JAL"
+                    className="w-full p-2 rounded-lg border border-slate-300 bg-white font-medium focus:ring-2 focus:ring-[#0061FF]"
+                    placeholder="Selecciona o escribe el destino..."
                   />
                 </div>
               </div>
+
+              {originName.trim().toLowerCase() === destinationName.trim().toLowerCase() && originName.length > 0 && (
+                <div className="p-2 bg-amber-50 border border-amber-200 rounded-lg flex items-center space-x-2 text-xs text-amber-900 font-medium">
+                  <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>El origen y destino coinciden. Por favor selecciona destinos distintos en México.</span>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
                 <div>
@@ -431,8 +446,8 @@ export const AIDispatchAgentModal: React.FC<AIDispatchAgentModalProps> = ({ isOp
           </button>
           <button
             onClick={handleApplyAssignment}
-            disabled={isAnalyzing || assignedSuccess}
-            className="px-5 py-2.5 bg-[#0061FF] hover:bg-[#0052D4] text-white text-xs font-bold rounded-xl shadow-md flex items-center space-x-2 transition-all"
+            disabled={isAnalyzing || assignedSuccess || (mode === 'NEW_ROUTE' && originName.trim().toLowerCase() === destinationName.trim().toLowerCase())}
+            className="px-5 py-2.5 bg-[#0061FF] hover:bg-[#0052D4] disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-md flex items-center space-x-2 transition-all"
           >
             <CheckCircle2 className="w-4 h-4 text-white" />
             <span>{mode === 'NEW_ROUTE' ? '🤖 Crear Ruta & Despachar con IA' : 'Aplicar Asignación Sugerida & Despachar'}</span>
