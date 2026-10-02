@@ -5,6 +5,10 @@ import { Sidebar } from './components/Sidebar';
 import { OverviewView } from './components/OverviewView';
 import { TripsView } from './components/TripsView';
 import { TripDetailView } from './components/TripDetailView';
+import { OpenBoxesWmsView } from './components/OpenBoxesWmsView';
+import { VroomVrpView } from './components/VroomVrpView';
+import { TraccarGpsView } from './components/TraccarGpsView';
+import { ChofexWaView } from './components/ChofexWaView';
 import { FleetView } from './components/FleetView';
 import { ProfitabilityView } from './components/ProfitabilityView';
 import { MoneyRecoveryView } from './components/MoneyRecoveryView';
@@ -32,6 +36,14 @@ export const AppContent: React.FC = () => {
         return <TripsView />;
       case 'TRIP_DETAIL':
         return <TripDetailView />;
+      case 'OPENBOXES_WMS':
+        return <OpenBoxesWmsView />;
+      case 'VROOM_VRP':
+        return <VroomVrpView />;
+      case 'TRACCAR_GPS':
+        return <TraccarGpsView />;
+      case 'CHOFEX_WA':
+        return <ChofexWaView />;
       case 'FLEET':
         return <FleetView />;
       case 'PROFITABILITY':

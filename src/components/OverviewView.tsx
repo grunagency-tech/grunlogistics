@@ -62,6 +62,125 @@ export const OverviewView: React.FC = () => {
         </div>
       </div>
 
+      {/* GrünTech 7-Asset Stack Grid */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">
+            SUITE TECNOLÓGICA GRÜNTECH (7 TECNOLOGÍAS INTEGRADAS)
+          </h2>
+          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+            100% Self-Hosted & Free-API
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Asset 1: FleetOps */}
+          <div
+            onClick={() => setCurrentView('TRIPS')}
+            className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:border-[#0061FF] hover:shadow-xs transition cursor-pointer space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#0061FF] font-mono">
+                fleetops
+              </span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            </div>
+            <div className="font-bold text-slate-900 text-xs group-hover:text-[#0061FF]">TMS & Despachador IA</div>
+            <div className="text-[11px] text-slate-500 font-medium">Drag & drop, ciclo de orden y e-POD</div>
+          </div>
+
+          {/* Asset 2: OpenBoxes */}
+          <div
+            onClick={() => setCurrentView('OPENBOXES_WMS')}
+            className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:border-[#0061FF] hover:shadow-xs transition cursor-pointer space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 font-mono">
+                openboxes
+              </span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            </div>
+            <div className="font-bold text-slate-900 text-xs group-hover:text-purple-600">WMS & Inventarios</div>
+            <div className="text-[11px] text-slate-500 font-medium">Lotes FEFO/FIFO, bins y picking en ola</div>
+          </div>
+
+          {/* Asset 3: Traccar */}
+          <div
+            onClick={() => setCurrentView('TRACCAR_GPS')}
+            className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:border-[#0061FF] hover:shadow-xs transition cursor-pointer space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-600 font-mono">
+                traccar
+              </span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            </div>
+            <div className="font-bold text-slate-900 text-xs group-hover:text-cyan-600">GPS & Telemática IoT</div>
+            <div className="text-[11px] text-slate-500 font-medium">Sensores diésel, temperatura y paro motor</div>
+          </div>
+
+          {/* Asset 4: VROOM */}
+          <div
+            onClick={() => setCurrentView('VROOM_VRP')}
+            className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:border-[#0061FF] hover:shadow-xs transition cursor-pointer space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 font-mono">
+                vroom
+              </span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            </div>
+            <div className="font-bold text-slate-900 text-xs group-hover:text-emerald-600">Optimizador VRP C++20</div>
+            <div className="text-[11px] text-slate-500 font-medium">VRPTW, LNS y ventanas de entrega</div>
+          </div>
+
+          {/* Asset 5: GraphHopper */}
+          <div
+            onClick={() => setCurrentView('ROUTES')}
+            className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:border-[#0061FF] hover:shadow-xs transition cursor-pointer space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 font-mono">
+                graphhopper
+              </span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            </div>
+            <div className="font-bold text-slate-900 text-xs group-hover:text-amber-600">Rutas & Casetas SCT</div>
+            <div className="text-[11px] text-slate-500 font-medium">32 hubs estatales y matrices peaje</div>
+          </div>
+
+          {/* Asset 6: GrünLogistics */}
+          <div
+            onClick={() => setCurrentView('PROFITABILITY')}
+            className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:border-[#0061FF] hover:shadow-xs transition cursor-pointer space-y-1.5 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#0061FF] font-mono">
+                grunlogistics
+              </span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            </div>
+            <div className="font-bold text-slate-900 text-xs group-hover:text-[#0061FF]">Motor de Rentabilidad</div>
+            <div className="text-[11px] text-slate-500 font-medium">Auditoría de fuel, km vacíos y estadías</div>
+          </div>
+
+          {/* Asset 7: Chofex / grun-viaje */}
+          <div
+            onClick={() => setCurrentView('CHOFEX_WA')}
+            className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:border-[#0061FF] hover:shadow-xs transition cursor-pointer space-y-1.5 group sm:col-span-2 lg:col-span-2"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 font-mono">
+                chofex / grun-viaje
+              </span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            </div>
+            <div className="font-bold text-slate-900 text-xs group-hover:text-emerald-600">Copilot WhatsApp & Audio Whisper</div>
+            <div className="text-[11px] text-slate-500 font-medium">Ingestión pre-TMS y Visión OCR e-POD para choferes</div>
+          </div>
+        </div>
+      </div>
+
       {/* Minimal Clean Text Summary Bar */}
       <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4 text-xs md:text-sm text-slate-600 font-medium">
         <div className="flex items-center space-x-2">

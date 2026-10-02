@@ -15,7 +15,11 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
-  Folder
+  Folder,
+  Warehouse,
+  Cpu,
+  Radio,
+  MessageSquare
 } from 'lucide-react';
 
 interface NavGroup {
@@ -49,9 +53,18 @@ export const Sidebar: React.FC = () => {
     {
       title: 'OPERACIÓN',
       items: [
-        { id: 'OVERVIEW', label: 'Inicio (Resumen)', icon: LayoutDashboard },
-        { id: 'TRIPS', label: 'Viajes & Despacho', icon: MapPin },
+        { id: 'OVERVIEW', label: 'Inicio (Torre de Control)', icon: LayoutDashboard },
+        { id: 'TRIPS', label: 'Viajes & Despacho (FleetOps)', icon: MapPin },
         { id: 'FLEET', label: 'Flota & Chóferes', icon: Truck }
+      ]
+    },
+    {
+      title: 'GRÜNTECH STACK',
+      items: [
+        { id: 'OPENBOXES_WMS', label: 'WMS OpenBoxes & Lotes', icon: Warehouse },
+        { id: 'VROOM_VRP', label: 'VROOM VRP (Opt. C++20)', icon: Cpu },
+        { id: 'TRACCAR_GPS', label: 'Traccar GPS & Telemetría', icon: Radio },
+        { id: 'CHOFEX_WA', label: 'Chofex Copilot WhatsApp', icon: MessageSquare }
       ]
     },
     {
@@ -65,15 +78,15 @@ export const Sidebar: React.FC = () => {
       title: 'ANÁLISIS DE RUTA',
       items: [
         { id: 'CUSTOMERS', label: 'Clientes', icon: Users },
-        { id: 'ROUTES', label: 'Rutas & Casetas', icon: Navigation },
+        { id: 'ROUTES', label: 'Rutas & Casetas (GraphHopper)', icon: Navigation },
         { id: 'EXCEPTIONS', label: 'Alertas de Riesgo', icon: AlertTriangle, badge: pendingExceptionsCount }
       ]
     },
     {
       title: 'SISTEMA',
       items: [
-        { id: 'DOCUMENTS', label: '🗂️ Bóveda de Documentos', icon: Folder },
-        { id: 'DATA', label: 'Manifiestos & Datos', icon: Database },
+        { id: 'DOCUMENTS', label: '🗂️ Bóveda & Carta Porte', icon: Folder },
+        { id: 'DATA', label: 'Arquitectura Stack GrünTech', icon: Database },
         { id: 'SETTINGS', label: 'Configuración', icon: Settings },
         { id: 'DRIVER_MOBILE', label: '📱 Modo App Chófer', icon: Smartphone }
       ]
