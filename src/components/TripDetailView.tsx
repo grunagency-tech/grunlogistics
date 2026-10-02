@@ -46,6 +46,8 @@ export const TripDetailView: React.FC = () => {
     );
   }
 
+  const existingCase = recoveryCases.find((c) => c.tripId === trip?.id);
+
   const econ = trip.economics;
   const marginDiff = econ.actualMarginMXN - econ.expectedMarginMXN;
   const fuelDiff = econ.actualFuelMXN - econ.estimatedFuelMXN;
