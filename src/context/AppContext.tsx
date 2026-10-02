@@ -75,6 +75,8 @@ interface AppContextType {
   // Routing Configuration
   routingProviderType: RoutingProviderType;
   setRoutingProviderType: (type: RoutingProviderType) => void;
+  hereApiKey: string;
+  setHereApiKey: (key: string) => void;
   googleApiKey: string;
   setGoogleApiKey: (key: string) => void;
 
@@ -152,7 +154,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [routingProviderType, setRoutingProviderType] = useState<RoutingProviderType>('HERE_MAPS');
+  const [hereApiKey, setHereApiKey] = useState<string>(() => {
+    try {
+      return localStorage.getItem('grunlogistics_here_api_key') || 'hzicjXZz_8PUd8RvIEjVzPhLWWBHLdtBz-6UXjttpQI';
+    } catch {
+      return 'hzicjXZz_8PUd8RvIEjVzPhLWWBHLdtBz-6UXjttpQI';
+    }
+  });
   const [googleApiKey, setGoogleApiKey] = useState('');
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('grunlogistics_here_api_key', hereApiKey);
+    } catch (e) {
+      console.error('Failed to save hereApiKey to localStorage', e);
+    }
+  }, [hereApiKey]);
 
   React.useEffect(() => {
     try {
@@ -395,6 +412,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         exceptions,
         routingProviderType,
         setRoutingProviderType,
+        hereApiKey,
+        setHereApiKey,
         googleApiKey,
         setGoogleApiKey,
         addTrip,

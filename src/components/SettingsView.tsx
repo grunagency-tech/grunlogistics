@@ -6,6 +6,8 @@ export const SettingsView: React.FC = () => {
   const {
     routingProviderType,
     setRoutingProviderType,
+    hereApiKey,
+    setHereApiKey,
     googleApiKey,
     setGoogleApiKey
   } = useApp();
@@ -95,13 +97,34 @@ export const SettingsView: React.FC = () => {
             </div>
 
             {routingProviderType === 'HERE_MAPS' && (
-              <div className="p-3 bg-slate-900 text-white rounded-lg space-y-2 text-xs">
-                <div className="font-bold text-emerald-400">HERE Maps API Configuration (Fleet Telematics & Traffic Matrix)</div>
+              <div className="p-3 bg-slate-900 text-white rounded-lg space-y-3 text-xs">
+                <div className="flex items-center justify-between">
+                  <div className="font-bold text-emerald-400">HERE Maps API Configuration (Fleet Telematics & Traffic Matrix)</div>
+                  <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 font-mono font-bold text-[10px] rounded border border-emerald-500/30">
+                    ✓ REST API v8 Activa
+                  </span>
+                </div>
                 <p className="text-[11px] text-slate-300">
                   Ruteo para autotransporte de carga con restricciones de peso, altura, peajes y cálculo de demoras por matriz de tráfico en tiempo real.
                 </p>
-                <div className="text-[10px] text-emerald-300 font-mono">
-                  Estatus: HERE Maps Routing v8 & Traffic Matrix API Activo
+
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold text-slate-300">HERE Maps API Key (REST v8):</label>
+                  <div className="relative">
+                    <Key className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      placeholder="hzicjXZz..."
+                      value={hereApiKey}
+                      onChange={(e) => setHereApiKey(e.target.value)}
+                      className="w-full bg-slate-800 border border-slate-700 rounded text-xs pl-8 pr-3 py-1.5 font-mono text-emerald-300 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-[10px] text-emerald-300 font-mono flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  API Key Configurada: {hereApiKey ? `${hereApiKey.slice(0, 12)}...${hereApiKey.slice(-6)}` : 'Sin Key'} (HERE Truck Routing v8 & SCT Tolls)
                 </div>
               </div>
             )}

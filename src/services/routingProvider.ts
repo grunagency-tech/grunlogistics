@@ -274,8 +274,8 @@ function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 export class HereRoutingProvider implements RoutingProvider {
   private apiKey: string;
 
-  constructor(apiKey: string) {
-    this.apiKey = apiKey;
+  constructor(apiKey?: string) {
+    this.apiKey = (apiKey && apiKey.trim().length > 0) ? apiKey : 'hzicjXZz_8PUd8RvIEjVzPhLWWBHLdtBz-6UXjttpQI';
   }
 
   async calculateRoute(params: RouteCalculationParams): Promise<RouteCalculationResult> {
@@ -531,10 +531,10 @@ export function getRoutingProvider(providerType: RoutingProviderType, apiKey?: s
     return new GraphHopperRoutingProvider();
   }
   if (providerType === 'HERE_MAPS') {
-    return new HereRoutingProvider(apiKey || '');
+    return new HereRoutingProvider(apiKey || 'hzicjXZz_8PUd8RvIEjVzPhLWWBHLdtBz-6UXjttpQI');
   }
   if (providerType === 'GOOGLE_ROUTES' && apiKey && apiKey.trim().length > 0) {
     return new GoogleRoutesProvider(apiKey);
   }
-  return new GraphHopperRoutingProvider();
+  return new HereRoutingProvider(apiKey || 'hzicjXZz_8PUd8RvIEjVzPhLWWBHLdtBz-6UXjttpQI');
 }
