@@ -315,25 +315,52 @@ export const DriverMobileView: React.FC = () => {
                 />
               </div>
 
-              {/* Photo Simulation button */}
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setTicketPhotoAttached(!ticketPhotoAttached)}
-                  className={`w-full py-3 px-3 rounded-xl border flex items-center justify-center space-x-2 font-bold text-xs transition-colors ${
-                    ticketPhotoAttached
-                      ? 'bg-emerald-950 border-emerald-600 text-emerald-300'
-                      : 'bg-slate-800 border-slate-700 text-slate-300'
-                  }`}
-                >
-                  <Camera className="w-4 h-4 text-emerald-400" />
-                  <span>
-                    {ticketPhotoAttached
-                      ? '✓ Fotografía del Ticket / POD Capturada'
-                      : 'Capturar Foto con la Cámara del Celular'}
-                  </span>
-                </button>
-              </div>
+              {ticketType === 'POD' ? (
+                <div className="space-y-3">
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    Firma Digital Táctil del Receptor (e-POD):
+                  </label>
+                  <div className="w-full h-32 bg-slate-950 border-2 border-dashed border-[#0061FF]/60 rounded-xl relative flex items-center justify-center p-2 text-slate-400 select-none cursor-crosshair">
+                    {/* Simulated digital touch signature line */}
+                    <svg className="absolute inset-0 w-full h-full stroke-[#0061FF] stroke-2 fill-none pointer-events-none">
+                      <path d="M 30 70 Q 70 20 120 60 T 200 50 T 280 80" />
+                    </svg>
+                    <div className="absolute bottom-2 right-2 text-[9px] font-mono text-[#0061FF] bg-[#EDF5FF]/10 px-2 py-0.5 rounded border border-[#0061FF]/30">
+                      ✓ Firma Táctil Registrada
+                    </div>
+                  </div>
+
+                  {/* AI Multimodal Vision OCR audit result */}
+                  <div className="p-3 bg-slate-950 border border-emerald-500/40 rounded-xl space-y-1 text-[11px]">
+                    <div className="flex items-center space-x-1 text-emerald-400 font-bold">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Auditoría IA Multimodal (e-POD Vision OCR):</span>
+                    </div>
+                    <p className="text-slate-300">
+                      ✓ Sello de almacén legible detectado · Folio remisión: <strong>#REM-94820</strong> · Salvedades / Daños: <strong>0 RECHAZOS</strong>.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setTicketPhotoAttached(!ticketPhotoAttached)}
+                    className={`w-full py-3 px-3 rounded-xl border flex items-center justify-center space-x-2 font-bold text-xs transition-colors ${
+                      ticketPhotoAttached
+                        ? 'bg-emerald-950 border-emerald-600 text-emerald-300'
+                        : 'bg-slate-800 border-slate-700 text-slate-300'
+                    }`}
+                  >
+                    <Camera className="w-4 h-4 text-emerald-400" />
+                    <span>
+                      {ticketPhotoAttached
+                        ? '✓ Fotografía del Ticket / POD Capturada'
+                        : 'Capturar Foto con la Cámara del Celular'}
+                    </span>
+                  </button>
+                </div>
+              )}
 
               <div className="pt-2 flex justify-end space-x-2">
                 <button

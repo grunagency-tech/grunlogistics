@@ -1,8 +1,4 @@
-import React, { useState } from 'react';
-import { useApp } from '../context/AppContext';
-import { Trip } from '../types';
-import { getRoutingProvider } from '../services/routingProvider';
-import { NewTripModal } from './NewTripModal';
+import { AIDispatchAgentModal } from './AIDispatchAgentModal';
 import {
   Plus,
   Search,
@@ -21,7 +17,9 @@ import {
   CheckCircle2,
   ShieldCheck,
   Building2,
-  PlayCircle
+  PlayCircle,
+  Bot,
+  Sparkles
 } from 'lucide-react';
 
 export const TripsView: React.FC = () => {
@@ -42,6 +40,7 @@ export const TripsView: React.FC = () => {
   } = useApp();
 
   const [showNewTripModal, setShowNewTripModal] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
   const [viewMode, setViewMode] = useState<'TABLE' | 'KANBAN'>('TABLE');
 
   // New Trip Form State
@@ -230,18 +229,26 @@ export const TripsView: React.FC = () => {
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto font-sans">
       <NewTripModal isOpen={showNewTripModal} onClose={() => setShowNewTripModal(false)} />
+      <AIDispatchAgentModal isOpen={showAiModal} onClose={() => setShowAiModal(false)} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-xl font-bold text-slate-900 tracking-tight font-sans">
-            Gestión de Viajes (Trips)
+            Gestión de Viajes (Trips & Despacho)
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
             Monitoreo económico, despacho operativo y compliancia Carta Porte SAT 3.1
           </p>
         </div>
-        <div className="flex items-center space-x-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            onClick={() => setShowAiModal(true)}
+            className="px-3.5 py-2 bg-[#0061FF] hover:bg-[#0052D4] text-white text-xs font-bold rounded-lg transition-all shadow-xs flex items-center space-x-1.5"
+          >
+            <Bot className="w-3.5 h-3.5" />
+            <span>🤖 Agente IA Despachador</span>
+          </button>
           <button
             onClick={exportTripsToCSV}
             className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-lg transition-all shadow-xs flex items-center space-x-1.5"
@@ -251,10 +258,10 @@ export const TripsView: React.FC = () => {
           </button>
           <button
             onClick={() => setShowNewTripModal(true)}
-            className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg transition-all shadow-xs flex items-center space-x-1.5"
+            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition-all shadow-xs flex items-center space-x-1.5"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Crear / Despachar Viaje</span>
+            <span>+ Crear Viaje</span>
           </button>
         </div>
       </div>
