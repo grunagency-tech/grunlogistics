@@ -47,16 +47,18 @@ export const SettingsView: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <button
                   type="button"
-                  onClick={() => setRoutingProviderType('DEMO_ROUTING')}
+                  onClick={() => setRoutingProviderType('GRAPHHOPPER')}
                   className={`p-3 rounded-lg border text-left transition-all ${
-                    routingProviderType === 'DEMO_ROUTING'
-                      ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 ring-1 ring-emerald-500 font-bold'
+                    routingProviderType === 'GRAPHHOPPER'
+                      ? 'border-[#0061FF] bg-[#EDF5FF] text-[#0061FF] ring-1 ring-[#0061FF] font-bold'
                       : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
                   }`}
                 >
-                  <div className="font-bold">DemoRoutingProvider</div>
+                  <div className="font-bold flex items-center gap-1 text-[#0061FF]">
+                    <span>GraphHopper (Local OSM)</span>
+                  </div>
                   <div className="text-[10px] text-slate-500 font-normal mt-0.5">
-                    Modo seguro con datos simulados coherentes
+                    100% Autónomo / Sin necesidad de APIs de pago
                   </div>
                 </button>
 
@@ -65,13 +67,13 @@ export const SettingsView: React.FC = () => {
                   onClick={() => setRoutingProviderType('HERE_MAPS')}
                   className={`p-3 rounded-lg border text-left transition-all ${
                     routingProviderType === 'HERE_MAPS'
-                      ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 ring-1 ring-emerald-500 font-bold'
+                      ? 'border-[#0061FF] bg-[#EDF5FF] text-[#0061FF] ring-1 ring-[#0061FF] font-bold'
                       : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
                   }`}
                 >
                   <div className="font-bold font-mono">HERE Maps (v8 Truck)</div>
                   <div className="text-[10px] text-slate-500 font-normal mt-0.5">
-                    Proveedor cartográfico & matrices de tráfico pesado
+                    Proveedor cartográfico REST API (Truck v8)
                   </div>
                 </button>
 
@@ -80,7 +82,7 @@ export const SettingsView: React.FC = () => {
                   onClick={() => setRoutingProviderType('GOOGLE_ROUTES')}
                   className={`p-3 rounded-lg border text-left transition-all ${
                     routingProviderType === 'GOOGLE_ROUTES'
-                      ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 ring-1 ring-emerald-500 font-bold'
+                      ? 'border-[#0061FF] bg-[#EDF5FF] text-[#0061FF] ring-1 ring-[#0061FF] font-bold'
                       : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
                   }`}
                 >

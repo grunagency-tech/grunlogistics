@@ -343,7 +343,7 @@ export interface ExceptionItem {
   actionRecommended: string;
 }
 
-export type RoutingProviderType = 'HERE_MAPS' | 'GOOGLE_ROUTES' | 'DEMO_ROUTING';
+export type RoutingProviderType = 'GRAPHHOPPER' | 'HERE_MAPS' | 'GOOGLE_ROUTES' | 'DEMO_ROUTING';
 
 export interface SamsaraTelemetryData {
   vehicleId: string;

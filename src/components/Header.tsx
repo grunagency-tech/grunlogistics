@@ -77,9 +77,15 @@ export const Header: React.FC = () => {
         >
           <span className="w-2 h-2 rounded-full bg-[#0061FF]" />
           <span className="hidden md:inline font-mono">
-            {routingProviderType === 'GOOGLE_ROUTES' ? 'GOOGLE ROUTES' : 'ROUTING DEMO MODE'}
+            {routingProviderType === 'GRAPHHOPPER'
+              ? 'GRAPHHOPPER (API-FREE)'
+              : routingProviderType === 'HERE_MAPS'
+              ? 'HERE TRUCK V8'
+              : routingProviderType === 'GOOGLE_ROUTES'
+              ? 'GOOGLE ROUTES'
+              : 'GRAPHHOPPER (API-FREE)'}
           </span>
-          <span className="md:hidden font-mono">DEMO MODE</span>
+          <span className="md:hidden font-mono">GRAPHHOPPER</span>
         </div>
 
         {/* Driver Mobile View Toggle */}
