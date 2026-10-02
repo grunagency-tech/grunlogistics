@@ -1,0 +1,6 @@
+trip_id,customer,origin,destination,revenue,fuel_cost,tolls_cost,cargo_description,vehicle_unit,driver_name
+5850,TechLogistics Corp,CEDIS Tepotzotlán Edomex,Parque Industrial Querétaro QRO,16500,4200,840,Componentes Electrónicos 18t,184,Roberto Gómez
+5851,AutoMotriz del Norte,Cuautitlán Izcalli Edomex,CEDIS Apodaca Monterrey NL,28500,7800,3200,Refacciones Automotrices 22t,201,Alejandro Morales
+5852,Comercializadora MexFrut,San Juan del Río QRO,CEDIS Vallejo CDMX,14200,3600,650,Fruta Fresca Envasada 16t,104,Jorge Ramírez
+5853,Abarrotera Central,CEDIS Tultitlán Edomex,San Luis Potosí SLP,22000,5400,1950,Abarrotes y Bebidas 24t,305,Esteban Morales
+5854,TechLogistics Corp,San Martín Obispo Edomex,Guadalajara JAL,26000,6200,2400,Equipos Computacionales 20t,184,Roberto Gómez

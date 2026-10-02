@@ -17,11 +17,88 @@ export const DataView: React.FC = () => {
   });
 
   const handleSimulateImport = () => {
-    setImportedRowsCount(42);
+    // Import realistic demo trips directly into system state
+    const demoImportTrips = [
+      {
+        id: `TRIP-5850`,
+        tripNumber: '5850',
+        customerId: 'CUST-001',
+        customerName: 'TechLogistics Corp',
+        originName: 'CEDIS Tepotzotlán Edomex',
+        destinationName: 'Parque Industrial Querétaro QRO',
+        cargoDescription: 'Componentes Electrónicos 18t',
+        cargoWeightKg: 18000,
+        vehicleId: 'VEH-184',
+        vehicleUnitNumber: '184',
+        trailerNumber: 'TR-5301',
+        driverId: 'DRV-014',
+        driverName: 'Roberto Gómez',
+        scheduledDeparture: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        scheduledArrival: new Date(Date.now() + 86400000).toISOString().slice(0, 16).replace('T', ' '),
+        deliveryAppointment: new Date(Date.now() + 86400000).toISOString().slice(0, 16).replace('T', ' '),
+        cartaPorteFolio: 'CP31-5850-SAT',
+        cartaPorteMercanciaSatCode: 'SAT-24101600',
+        cartaPorteSeguroPoliza: 'Qualitas #POL-99281',
+        cartaPorteStatus: 'CUMPLE' as const,
+        plannedDistanceKm: 185,
+        actualDistanceKm: 185,
+        loadedKm: 165,
+        emptyKm: 20,
+        emptyKmPercent: 10.8,
+        emptyKmCostMXN: 220,
+        economics: {
+          revenueMXN: 16500,
+          estimatedFuelMXN: 4200,
+          estimatedTollsMXN: 840,
+          estimatedDriverPayMXN: 1800,
+          estimatedOtherMXN: 500,
+          totalEstimatedCostMXN: 7340,
+          expectedMarginMXN: 9160,
+          expectedMarginPercent: 55.5,
+          expectedDistanceKm: 185,
+          expectedFuelLiters: 171,
+          expectedTollsMXN: 840,
+          actualFuelMXN: 4200,
+          actualTollsMXN: 840,
+          actualDriverPayMXN: 1800,
+          actualOtherMXN: 500,
+          totalActualCostMXN: 7340,
+          actualMarginMXN: 9160,
+          actualMarginPercent: 55.5,
+          costVarianceMXN: 0,
+          marginVarianceMXN: 0,
+          breakEvenRevenueMXN: 7340,
+          marginBufferMXN: 9160
+        },
+        status: 'DISPATCHED' as const,
+        routeDeviationKm: 0,
+        routeDeviationCostMXN: 0,
+        routeDeviationStatus: 'NO_DEVIATION' as const,
+        waitingMinutes: 0,
+        allowedWaitingMinutes: 30,
+        excessWaitingMinutes: 0,
+        potentialDetentionMXN: 0,
+        detentionBillableStatus: 'Not billable' as const,
+        events: [],
+        fuelTransactions: [],
+        costs: [],
+        podUploaded: false,
+        invoiceUploaded: false,
+        hasRecoveryCase: false,
+        currentLocationName: 'CEDIS Tepotzotlán',
+        currentCoordinates: { lat: 19.7042, lng: -99.2223 },
+        eta: 'En tiempo',
+        delayMinutes: 0,
+        financialExposureMXN: 0
+      }
+    ];
+
+    demoImportTrips.forEach((t) => addTrip(t));
+    setImportedRowsCount(5);
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-6 space-y-6 max-w-7xl mx-auto font-sans text-slate-900">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200/80 shadow-xs">
         <div>
@@ -32,6 +109,14 @@ export const DataView: React.FC = () => {
             Carga de archivos CSV, Excel y JSON con mapeo dinámico de columnas para pruebas rápidas
           </p>
         </div>
+        <a
+          href="/TRIPS_demo_import.csv"
+          download
+          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-lg transition-all shadow-xs flex items-center space-x-1.5 shrink-0"
+        >
+          <FileText className="w-4 h-4 text-emerald-700" />
+          <span>📥 Descargar CSV Ejemplo</span>
+        </a>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -75,12 +160,21 @@ export const DataView: React.FC = () => {
                 Soporta formato UTF-8 con delimitadores por coma o punto y coma
               </div>
             </div>
-            <button
-              onClick={handleSimulateImport}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg shadow-xs transition-colors"
-            >
-              Cargar Archivo de Prueba Demo ({selectedEntity}.csv)
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <a
+                href="/TRIPS_demo_import.csv"
+                download
+                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-lg transition-colors"
+              >
+                Descargar Archivo TRIPS.csv
+              </a>
+              <button
+                onClick={handleSimulateImport}
+                className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg shadow-xs transition-colors"
+              >
+                Cargar Archivo de Prueba Demo ({selectedEntity}.csv)
+              </button>
+            </div>
           </div>
 
           {importedRowsCount !== null && (
@@ -90,8 +184,7 @@ export const DataView: React.FC = () => {
                 <span>¡Se han procesado {importedRowsCount} registros exitosamente!</span>
               </div>
               <p className="text-[11px] text-emerald-800">
-                Los datos de {selectedEntity} han sido importados y mapeados al Trip Engine de
-                GRUNLOGISTICS.
+                Los datos de {selectedEntity} han sido importados e integrados directamente a la plataforma GRUNLOGISTICS.
               </p>
             </div>
           )}
