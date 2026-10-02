@@ -100,16 +100,64 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
 
-  const [trips, setTrips] = useState<Trip[]>(initialTrips);
+  const [trips, setTrips] = useState<Trip[]>(() => {
+    try {
+      const saved = localStorage.getItem('grunlogistics_trips');
+      return saved ? JSON.parse(saved) : initialTrips;
+    } catch {
+      return initialTrips;
+    }
+  });
+
   const [vehicles, setVehicles] = useState<Vehicle[]>(initialVehicles);
   const [drivers, setDrivers] = useState<Driver[]>(initialDrivers);
   const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
   const [routes, setRoutes] = useState<Route[]>(initialRoutes);
-  const [recoveryCases, setRecoveryCases] = useState<RecoveryCase[]>(initialRecoveryCases);
-  const [exceptions, setExceptions] = useState<ExceptionItem[]>(initialExceptions);
 
-  const [routingProviderType, setRoutingProviderType] = useState<RoutingProviderType>('DEMO_ROUTING');
+  const [recoveryCases, setRecoveryCases] = useState<RecoveryCase[]>(() => {
+    try {
+      const saved = localStorage.getItem('grunlogistics_recovery');
+      return saved ? JSON.parse(saved) : initialRecoveryCases;
+    } catch {
+      return initialRecoveryCases;
+    }
+  });
+
+  const [exceptions, setExceptions] = useState<ExceptionItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('grunlogistics_exceptions');
+      return saved ? JSON.parse(saved) : initialExceptions;
+    } catch {
+      return initialExceptions;
+    }
+  });
+
+  const [routingProviderType, setRoutingProviderType] = useState<RoutingProviderType>('HERE_MAPS');
   const [googleApiKey, setGoogleApiKey] = useState('');
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('grunlogistics_trips', JSON.stringify(trips));
+    } catch (e) {
+      console.error('Failed to save trips to localStorage', e);
+    }
+  }, [trips]);
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('grunlogistics_recovery', JSON.stringify(recoveryCases));
+    } catch (e) {
+      console.error('Failed to save recoveryCases to localStorage', e);
+    }
+  }, [recoveryCases]);
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('grunlogistics_exceptions', JSON.stringify(exceptions));
+    } catch (e) {
+      console.error('Failed to save exceptions to localStorage', e);
+    }
+  }, [exceptions]);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 

@@ -27,15 +27,13 @@ export const TripDetailView: React.FC = () => {
     addOperationalEvent
   } = useApp();
 
-  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
-  const [showPodModal, setShowPodModal] = useState(false);
-  const [showWhatsappModal, setShowWhatsappModal] = useState(false);
-  const [whatsappRecipient, setWhatsappRecipient] = useState<'CLIENT' | 'DRIVER'>('CLIENT');
-  const [whatsappMsgSent, setWhatsappMsgSent] = useState(false);
-
-  const econ = trip.economics;
-  const existingCase = recoveryCases.find((c) => c.tripId === trip.id);
-  const marginDiff = econ.actualMarginMXN - econ.expectedMarginMXN;
+  // Dynamic Profitability Engine & Leakage Detector (Misión 2)
+  const fuelDiff = econ.actualFuelMXN - econ.estimatedFuelMXN;
+  const tollsDiff = econ.actualTollsMXN - econ.estimatedTollsMXN;
+  const excessMinutes = Math.max(0, trip.waitingMinutes - trip.allowedWaitingMinutes);
+  const waitingCostEst = Math.round((excessMinutes / 60) * 450);
+  const isMarginLeak = marginDiff < 0 && (Math.abs(marginDiff) / econ.revenueMXN >= 0.05 || (econ.expectedMarginPercent - econ.actualMarginPercent) >= 5);
+  const [showClaimReportModal, setShowClaimReportModal] = useState(false);
 
   const handleSendWhatsapp = () => {
     const msgText =
@@ -189,7 +187,27 @@ export const TripDetailView: React.FC = () => {
         </div>
       </div>
 
-      {/* WHY DID MARGIN CHANGE? */}
+      {/* RED ALERT CARD FOR MARGIN LEAK (Misión 2: Profitability Engine) */}
+      {isMarginLeak && (
+        <div className="bg-rose-50 border-2 border-rose-300 rounded-2xl p-5 flex items-start space-x-4 shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center shrink-0">
+            <AlertTriangle className="w-6 h-6 animate-pulse" />
+          </div>
+          <div className="space-y-1">
+            <div className="text-sm font-extrabold text-rose-950 uppercase tracking-wide">
+              🔴 Fuga Detectada: Desvío Financiero Crítico ({Math.abs(marginDiff).toLocaleString()} MXN)
+            </div>
+            <p className="text-xs text-rose-900 leading-relaxed">
+              El margen real <strong>({econ.actualMarginPercent}%)</strong> cayó respecto al esperado <strong>({econ.expectedMarginPercent}%)</strong>. 
+              {fuelDiff > 0 && ` Sobreconsumo de diésel: +$${fuelDiff.toLocaleString()} MXN (Rendimiento 2.35 km/L vs meta 2.80 km/L).`}
+              {tollsDiff > 0 && ` Peajes no contemplados: +$${tollsDiff.toLocaleString()} MXN.`}
+              {excessMinutes > 0 && ` Retraso en rampa no amortizado: ${excessMinutes} min.`}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* WHY DID MARGIN CHANGE? (Dynamic Profitability Engine) */}
       <div className="bg-white rounded-2xl border border-slate-200/80 p-6 space-y-4 shadow-xs">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
@@ -216,9 +234,11 @@ export const TripDetailView: React.FC = () => {
             <span className="text-[10px] text-slate-400 uppercase font-semibold block">
               Waiting / Estadía en Rampa
             </span>
-            <div className="text-lg font-bold font-mono text-amber-800">+$180 MXN</div>
+            <div className={`text-lg font-bold font-mono ${excessMinutes > 0 ? 'text-amber-800' : 'text-slate-700'}`}>
+              {excessMinutes > 0 ? `+$${waitingCostEst} MXN` : '$0 MXN'}
+            </div>
             <p className="text-[11px] text-slate-500">
-              104 min de espera excedente sobre tiempo libre configurado.
+              {excessMinutes > 0 ? `${excessMinutes} min de espera excedente sobre libre.` : 'Sin exceso de espera registrado.'}
             </p>
           </div>
 
@@ -226,9 +246,11 @@ export const TripDetailView: React.FC = () => {
             <span className="text-[10px] text-slate-400 uppercase font-semibold block">
               Fuel / Diésel
             </span>
-            <div className="text-lg font-bold font-mono text-rose-700">+$120 MXN</div>
+            <div className={`text-lg font-bold font-mono ${fuelDiff > 0 ? 'text-rose-700' : 'text-emerald-700'}`}>
+              {fuelDiff >= 0 ? `+$${fuelDiff} MXN` : `-$${Math.abs(fuelDiff)} MXN`}
+            </div>
             <p className="text-[11px] text-slate-500">
-              Rendimiento 2.35 km/L vs 2.80 baseline en tramo de tráfico.
+              {fuelDiff > 0 ? 'Rendimiento real por debajo de la línea base esperada.' : 'Combustible consumido conforme a lo planificado.'}
             </p>
           </div>
 
@@ -236,15 +258,17 @@ export const TripDetailView: React.FC = () => {
             <span className="text-[10px] text-slate-400 uppercase font-semibold block">
               Other / Casetas & Viáticos
             </span>
-            <div className="text-lg font-bold font-mono text-slate-800">+$40 MXN</div>
+            <div className="text-lg font-bold font-mono text-slate-800">
+              {tollsDiff >= 0 ? `+$${tollsDiff} MXN` : `-$${Math.abs(tollsDiff)} MXN`}
+            </div>
             <p className="text-[11px] text-slate-500">
-              Desvío ligero de ruta (+18 km en libramiento de cuota).
+              {tollsDiff > 0 ? 'Desvío de ruta o casetas adicionales cobradas.' : 'Sin variaciones en peajes y casetas.'}
             </p>
           </div>
         </div>
       </div>
 
-      {/* RECOVERY WITH PDF CLAIM GENERATOR (Feature 2) */}
+      {/* RECOVERY WITH PDF CLAIM GENERATOR (Misión 3: Money Recovery Report) */}
       <div className="bg-emerald-50/60 rounded-2xl border border-emerald-200/80 p-6 space-y-4">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-900 font-mono">
@@ -260,21 +284,19 @@ export const TripDetailView: React.FC = () => {
             ${trip.potentialDetentionMXN.toLocaleString()} MXN
           </div>
           <p className="text-xs text-slate-600 mt-1">
-            Estadía en rampa ({trip.waitingMinutes} min total) excede los {trip.allowedWaitingMinutes} min libres.
+            Estadía en rampa ({trip.waitingMinutes} min total) excede los {trip.allowedWaitingMinutes} min libres pactados.
           </p>
         </div>
 
-        {/* ONE-CLICK PDF CLAIM GENERATOR BUTTON (Feature 2) */}
+        {/* ONE-CLICK PDF CLAIM GENERATOR BUTTON (Misión 3) */}
         <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
-          <a
-            href="/Carta_Reclamacion_Estadia_5831.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => setShowClaimReportModal(true)}
             className="w-full sm:w-auto px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center space-x-2"
           >
             <Download className="w-4 h-4 text-emerald-400" />
-            <span>Descargar Carta de Reclamación PDF (One-Click Claim)</span>
-          </a>
+            <span>Generar Reporte de Cobro de Estadía (Claim Modal)</span>
+          </button>
 
           {!existingCase && (
             <button
@@ -286,7 +308,7 @@ export const TripDetailView: React.FC = () => {
                   customerName: trip.customerName,
                   reason: 'Detention',
                   amountMXN: trip.potentialDetentionMXN,
-                  evidenceDescription: `Estadía excesiva en rampa (${trip.waitingMinutes} min)`
+                  evidenceDescription: `Estadía excesiva en rampa (${trip.waitingMinutes} min en CEDIS)`
                 });
               }}
               className="w-full sm:w-auto px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
@@ -296,6 +318,86 @@ export const TripDetailView: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* CLAIM REPORT MODAL (Misión 3) */}
+      {showClaimReportModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl border border-slate-200 font-sans text-xs">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center space-x-2">
+                <FileText className="w-5 h-5 text-emerald-800" />
+                <h3 className="font-bold text-base text-slate-900">REPORTE DE COBRO DE ESTADÍA (MONEY RECOVERY)</h3>
+              </div>
+              <button onClick={() => setShowClaimReportModal(false)} className="text-slate-400 hover:text-slate-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3 font-mono">
+              <div className="flex justify-between text-slate-700 font-bold border-b border-slate-200 pb-2">
+                <span>FOLIO VIAJE: #{trip.tripNumber}</span>
+                <span>FECHA: {new Date().toISOString().split('T')[0]}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-slate-800 text-[11px]">
+                <div><strong>CLIENTE:</strong> {trip.customerName}</div>
+                <div><strong>CEDIS DESTINO:</strong> {trip.destinationName}</div>
+                <div><strong>OPERADOR:</strong> {trip.driverName}</div>
+                <div><strong>UNIDAD / REMOLQUE:</strong> {trip.vehicleUnitNumber} ({trip.trailerNumber})</div>
+                <div><strong>CITA REGISTRADA:</strong> {trip.deliveryAppointment}</div>
+                <div><strong>CARTA PORTE SAT:</strong> {trip.cartaPorteFolio}</div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="font-bold text-slate-900 text-xs uppercase font-mono">Desglose de Horas y Demora en Rampa</h4>
+              <table className="w-full text-left border border-slate-200 rounded-lg overflow-hidden text-xs">
+                <thead className="bg-slate-100 font-semibold text-slate-700">
+                  <tr>
+                    <th className="p-2.5">Concepto</th>
+                    <th className="p-2.5 text-right">Tiempo / Valor</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  <tr>
+                    <td className="p-2.5">Tiempo Total de Permanencia en CEDIS</td>
+                    <td className="p-2.5 text-right font-mono font-bold">{trip.waitingMinutes} minutos</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2.5">Tiempo de Gracia Permitido (Contrato)</td>
+                    <td className="p-2.5 text-right font-mono text-slate-600">{trip.allowedWaitingMinutes} minutos</td>
+                  </tr>
+                  <tr className="bg-amber-50">
+                    <td className="p-2.5 font-bold text-amber-900">Horas Excedentes Cobrables</td>
+                    <td className="p-2.5 text-right font-mono font-bold text-amber-900">{Math.ceil(excessMinutes / 60)} hora(s)</td>
+                  </tr>
+                  <tr className="bg-emerald-50">
+                    <td className="p-2.5 font-bold text-emerald-950">Monto Total a Facturar por Estadía</td>
+                    <td className="p-2.5 text-right font-mono text-base font-extrabold text-emerald-950">
+                      ${trip.potentialDetentionMXN.toLocaleString()} MXN
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-3 border-t border-slate-100">
+              <button
+                onClick={() => window.print()}
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl flex items-center space-x-2"
+              >
+                <Download className="w-4 h-4 text-emerald-400" />
+                <span>Imprimir / Guardar PDF</span>
+              </button>
+              <button
+                onClick={() => setShowClaimReportModal(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* WHATSAPP NOTIFICATION MODAL (Feature 6) */}
       {showWhatsappModal && (

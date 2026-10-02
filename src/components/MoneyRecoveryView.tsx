@@ -16,9 +16,11 @@ export const MoneyRecoveryView: React.FC = () => {
   const addMileageSum = recoveryCases.filter((c) => c.reason === 'Additional mileage').reduce((a, c) => a + c.amountMXN, 0);
   const otherSum = totalPotential - detentionSum - extraServicesSum - addMileageSum;
 
+  const [showPrintModal, setShowPrintModal] = useState(false);
+
   return (
     <div className="p-6 md:p-8 space-y-8 max-w-5xl mx-auto font-sans text-slate-900">
-      {/* Editorial Header (Requirement 9) */}
+      {/* Editorial Header */}
       <div className="space-y-3 pb-6 border-b border-slate-200/60">
         <span className="text-xs font-bold text-slate-400 uppercase font-mono tracking-widest block">
           MONEY RECOVERY INBOX
@@ -31,7 +33,7 @@ export const MoneyRecoveryView: React.FC = () => {
         </p>
       </div>
 
-      {/* POTENTIAL RECOVERY HEADER BLOCK (Requirement 9) */}
+      {/* POTENTIAL RECOVERY HEADER BLOCK */}
       <div className="bg-emerald-50/70 rounded-2xl border border-emerald-200/80 p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -47,7 +49,7 @@ export const MoneyRecoveryView: React.FC = () => {
           </div>
         </div>
 
-        {/* Category Breakdown Blocks (Requirement 9) */}
+        {/* Category Breakdown Blocks */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs font-sans">
           <div className="p-3 bg-white/80 rounded-xl border border-emerald-200/70">
             <span className="text-[10px] text-slate-400 font-semibold uppercase block">Detention</span>
@@ -71,7 +73,7 @@ export const MoneyRecoveryView: React.FC = () => {
         </div>
       </div>
 
-      {/* RECOVERY CASES LIST (Requirement 9: Clean case list) */}
+      {/* RECOVERY CASES LIST */}
       <div className="space-y-4">
         <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">
           BANDEJA DE CASOS (RECOVERY CASES)
@@ -157,14 +159,13 @@ export const MoneyRecoveryView: React.FC = () => {
               Ver Viaje Completo →
             </button>
             <div className="flex flex-wrap items-center gap-2">
-              <a
-                href="/Carta_Reclamacion_Estadia_5831.pdf"
-                download
+              <button
+                onClick={() => setShowPrintModal(true)}
                 className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg shadow-xs flex items-center space-x-1.5 transition-colors"
               >
                 <FileText className="w-3.5 h-3.5" />
-                <span>Descargar Carta de Cobro PDF</span>
-              </a>
+                <span>Generar Reporte de Cobro PDF</span>
+              </button>
               <button
                 onClick={() => updateRecoveryStatus(selectedCase.id, 'Approved')}
                 className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-lg"
@@ -181,6 +182,54 @@ export const MoneyRecoveryView: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+
+      {/* PRINTABLE CLAIM MODAL */}
+      {showPrintModal && selectedCase && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 space-y-5 shadow-2xl border border-slate-200 font-sans text-xs">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center space-x-2">
+                <FileText className="w-5 h-5 text-emerald-800" />
+                <h3 className="font-bold text-sm text-slate-900">REPORTE FORMAL DE RECLAMACIÓN — {selectedCase.caseCode}</h3>
+              </div>
+              <button onClick={() => setShowPrintModal(false)} className="text-slate-400 hover:text-slate-700">
+                ✕
+              </button>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2 font-mono">
+              <div className="flex justify-between font-bold text-slate-800">
+                <span>FOLIO CASO: {selectedCase.caseCode}</span>
+                <span>VIAJE: #{selectedCase.tripNumber}</span>
+              </div>
+              <div>CLIENTE: {selectedCase.customerName}</div>
+              <div>CONCEPTO: {selectedCase.reason}</div>
+              <div>FECHA DE REGISTRO: {selectedCase.createdAt}</div>
+              <div>ESTATUS RECLAMO: {selectedCase.status}</div>
+            </div>
+
+            <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-1">
+              <span className="text-[10px] text-emerald-800 font-bold uppercase font-mono block">MONTO A COBRAR AL CLIENTE</span>
+              <div className="text-3xl font-extrabold text-emerald-950 font-mono">${selectedCase.amountMXN.toLocaleString()} MXN</div>
+              <p className="text-[11px] text-emerald-900 mt-1">Sustentado en evidencia de telemetría GPS y horas de permanencia en rampa excesivas.</p>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-2">
+              <button
+                onClick={() => window.print()}
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs"
+              >
+                Imprimir Documento PDF
+              </button>
+              <button
+                onClick={() => setShowPrintModal(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
   );
 };
