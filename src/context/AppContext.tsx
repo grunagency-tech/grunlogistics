@@ -104,8 +104,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [trips, setTrips] = useState<Trip[]>(() => {
     try {
       const saved = localStorage.getItem('grunlogistics_trips');
-      return saved ? JSON.parse(saved) : initialTrips;
-    } catch {
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((t: any) => ({
+            ...(initialTrips[0] || {}),
+            ...t,
+            economics: t.economics || (initialTrips[0] ? initialTrips[0].economics : {}),
+            events: t.events || [],
+            fuelTransactions: t.fuelTransactions || [],
+            costs: t.costs || []
+          }));
+        }
+      }
+      return initialTrips;
+    } catch (e) {
+      console.warn('Error reading trips from localStorage', e);
       return initialTrips;
     }
   });
@@ -177,6 +191,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const addTrip = (newTrip: Trip) => {
     setTrips((prev) => [newTrip, ...prev]);
+    setSelectedTripId(newTrip.id);
   };
 
   const addRecoveryCase = (caseData: Partial<RecoveryCase>) => {

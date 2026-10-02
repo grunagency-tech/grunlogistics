@@ -23,15 +23,19 @@ export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) =
 
   if (!isOpen) return null;
 
-  const selectedCustomer = customers.find((c) => c.id === customerId) || customers[0];
-  const selectedVehicle = vehicles.find((v) => v.id === vehicleId) || vehicles[0];
-  const selectedDriver = drivers.find((d) => d.id === driverId) || drivers[0];
+  const defaultCustomer = customers[0] || { id: 'CUST-001', name: 'TechLogistics Corp', allowedWaitingMinutes: 30 };
+  const defaultVehicle = vehicles[0] || { id: 'VEH-184', unitNumber: '184', expectedFuelEfficiencyKmL: 2.7, trailerNumber: 'TR-5320' };
+  const defaultDriver = drivers[0] || { id: 'DRV-014', name: 'Roberto Garza', payModel: 'PER_KM', payRateAmount: 2.2 };
+
+  const selectedCustomer = customers.find((c) => c.id === customerId) || defaultCustomer;
+  const selectedVehicle = vehicles.find((v) => v.id === vehicleId) || defaultVehicle;
+  const selectedDriver = drivers.find((d) => d.id === driverId) || defaultDriver;
 
   // Automatic baseline cost calculations
   const expectedFuelLiters = Math.round(distanceKm / (selectedVehicle.expectedFuelEfficiencyKmL || 2.7));
   const estimatedFuelMXN = Math.round(expectedFuelLiters * 24.50); // $24.50 MXN per liter
   const estimatedTollsMXN = Math.round(distanceKm * 3.40); // Avg toll cost/km
-  const estimatedDriverPayMXN = selectedDriver.payModel === 'FIXED_TRIP' ? selectedDriver.payRateAmount : Math.round(distanceKm * 2.2);
+  const estimatedDriverPayMXN = selectedDriver.payModel === 'FIXED_TRIP' ? (selectedDriver.payRateAmount || 2100) : Math.round(distanceKm * 2.2);
   const estimatedOtherMXN = 800; // Permits & logistics allocation
 
   const totalEstimatedCostMXN = estimatedFuelMXN + estimatedTollsMXN + estimatedDriverPayMXN + estimatedOtherMXN;
@@ -41,8 +45,9 @@ export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) =
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const randomIdNumber = Math.floor(5800 + Math.random() * 2000);
-    const newTripId = `TRIP-${randomIdNumber}`;
+    try {
+      const randomIdNumber = Math.floor(5800 + Math.random() * 2000);
+      const newTripId = `TRIP-${randomIdNumber}`;
 
     const newTrip: Trip = {
       id: newTripId,
@@ -136,9 +141,13 @@ export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) =
       financialExposureMXN: 0
     };
 
-    addTrip(newTrip);
-    onClose();
-    openTripDetail(newTripId);
+      addTrip(newTrip);
+      onClose();
+      openTripDetail(newTripId);
+    } catch (err) {
+      console.error('Error creating new trip:', err);
+      onClose();
+    }
   };
 
   return (
