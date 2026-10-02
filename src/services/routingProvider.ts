@@ -266,6 +266,27 @@ export class GoogleRoutesProvider implements RoutingProvider {
   }
 }
 
+const CORRIDOR_EXACT_HIGHWAY_KM: Record<string, { distanceKm: number; tollsMXN: number }> = {
+  'puebla-guadalajara': { distanceKm: 664, tollsMXN: 2280 },
+  'guadalajara-puebla': { distanceKm: 664, tollsMXN: 2280 },
+  'monterrey-cdmx': { distanceKm: 905, tollsMXN: 3200 },
+  'cdmx-monterrey': { distanceKm: 905, tollsMXN: 3200 },
+  'monterrey-guadalajara': { distanceKm: 785, tollsMXN: 2850 },
+  'guadalajara-monterrey': { distanceKm: 785, tollsMXN: 2850 },
+  'marques-cdmx': { distanceKm: 208, tollsMXN: 735 },
+  'cdmx-marques': { distanceKm: 208, tollsMXN: 735 },
+  'queretaro-cdmx': { distanceKm: 218, tollsMXN: 770 },
+  'cdmx-queretaro': { distanceKm: 218, tollsMXN: 770 },
+  'tepotzotlan-queretaro': { distanceKm: 185, tollsMXN: 840 },
+  'queretaro-tepotzotlan': { distanceKm: 185, tollsMXN: 840 },
+  'guadalajara-laredo': { distanceKm: 980, tollsMXN: 3600 },
+  'laredo-guadalajara': { distanceKm: 980, tollsMXN: 3600 },
+  'sanluis-monterrey': { distanceKm: 520, tollsMXN: 1950 },
+  'monterrey-sanluis': { distanceKm: 520, tollsMXN: 1950 },
+  'puebla-veracruz': { distanceKm: 280, tollsMXN: 1100 },
+  'veracruz-puebla': { distanceKm: 280, tollsMXN: 1100 }
+};
+
 export class GraphHopperRoutingProvider implements RoutingProvider {
   private localHostUrl: string;
 
@@ -277,12 +298,35 @@ export class GraphHopperRoutingProvider implements RoutingProvider {
     const originCoords = getHubCoords(params.origin);
     const destCoords = getHubCoords(params.destination);
 
-    // GraphHopper OpenStreetMap Local Route Engine Computation
-    const directKm = haversineDistanceKm(originCoords.lat, originCoords.lng, destCoords.lat, destCoords.lng);
-    const roadFactor = directKm > 400 ? 1.22 : 1.28;
-    const distanceKm = Math.max(35, Math.round(directKm * roadFactor));
-    const durationMinutes = Math.round((distanceKm / 74) * 60 + 10);
-    const estimatedTollsMXN = Math.round(distanceKm * 3.42);
+    // Normalize keys to check highway matrix
+    const origKey = params.origin.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const destKey = params.destination.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    
+    let matchedCorridorKey = Object.keys(CORRIDOR_EXACT_HIGHWAY_KM).find((key) => {
+      const [from, to] = key.split('-');
+      return origKey.includes(from) && destKey.includes(to);
+    });
+
+    let distanceKm: number;
+    let estimatedTollsMXN: number;
+
+    if (matchedCorridorKey && CORRIDOR_EXACT_HIGHWAY_KM[matchedCorridorKey]) {
+      distanceKm = CORRIDOR_EXACT_HIGHWAY_KM[matchedCorridorKey].distanceKm;
+      estimatedTollsMXN = CORRIDOR_EXACT_HIGHWAY_KM[matchedCorridorKey].tollsMXN;
+    } else {
+      const directKm = haversineDistanceKm(originCoords.lat, originCoords.lng, destCoords.lat, destCoords.lng);
+      if (directKm < 2) {
+        distanceKm = 0;
+        estimatedTollsMXN = 0;
+      } else {
+        const roadFactor = directKm > 400 ? 1.18 : 1.20;
+        distanceKm = Math.round(directKm * roadFactor);
+        estimatedTollsMXN = Math.round(distanceKm * 3.42);
+      }
+    }
+
+    // Heavy truck highway speed ~78 km/h + toll booth delays
+    const durationMinutes = distanceKm > 0 ? Math.round((distanceKm / 78) * 60 + Math.min(45, Math.round(distanceKm * 0.03))) : 0;
 
     return {
       distanceKm,
