@@ -104,8 +104,24 @@ export const initialCustomers: Customer[] = [
 
 export const initialRoutes: Route[] = [
   {
+    id: 'RTE-CORREDOR-57',
+    name: 'Corredor 57: Tepotzotlán → Querétaro (NAFTA Main Hub)',
+    originName: 'CEDIS Tepotzotlán / Cuautitlán, Edomex',
+    destinationName: 'Parque Industrial Querétaro, QRO',
+    distanceKm: 185,
+    avgDurationMinutes: 140,
+    plannedTollsMXN: 840,
+    totalTripsCount: 84,
+    avgRevenueMXN: 16500,
+    avgCostMXN: 7200,
+    avgMarginMXN: 9300,
+    avgEmptyKmPercent: 12,
+    avgWaitingMinutes: 45,
+    status: 'PROFITABLE'
+  },
+  {
     id: 'RTE-MTY-MEX',
-    name: 'Monterrey → CDMX',
+    name: 'Corredor 57 Norte: Monterrey → CDMX',
     originName: 'Monterrey, NL',
     destinationName: 'Ciudad de México, CDMX',
     distanceKm: 920,

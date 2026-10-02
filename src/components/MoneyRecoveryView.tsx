@@ -231,5 +231,6 @@ export const MoneyRecoveryView: React.FC = () => {
           </div>
         </div>
       )}
+    </div>
   );
 };
