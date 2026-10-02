@@ -24,35 +24,82 @@ export interface RoutingProvider {
   calculateDuration(origin: string, destination: string): Promise<number>;
 }
 
-// Known Mexican Highway Hub Coordinates (Corredor NAFTA 57 & Bajío)
+// Known Mexican Highway Hub Coordinates (Corredor NAFTA 57, Bajío, Norte, Occidente, Sur & Puertos)
 const MEXICAN_LOGISTICS_HUBS: Record<string, { lat: number; lng: number; fullName: string }> = {
-  tepotzotlan: { lat: 19.7042, lng: -99.2223, fullName: 'CEDIS Tepotzotlán, Edomex' },
-  cuautitlan: { lat: 19.6780, lng: -99.1760, fullName: 'Cuautitlán Izcalli, Edomex' },
-  tultitlan: { lat: 19.6450, lng: -99.1670, fullName: 'CEDIS Tultitlán, Edomex' },
-  sanmartin: { lat: 19.6050, lng: -99.2080, fullName: 'San Martín Obispo, Edomex' },
-  cdmx: { lat: 19.4326, lng: -99.1332, fullName: 'Ciudad de México, CDMX' },
+  // Querétaro & El Marqués Corridor
+  marques: { lat: 20.6270, lng: -100.2840, fullName: 'Parque Industrial El Marqués, QRO' },
+  marqués: { lat: 20.6270, lng: -100.2840, fullName: 'Parque Industrial El Marqués, QRO' },
   queretaro: { lat: 20.6120, lng: -100.4100, fullName: 'Parque Industrial Querétaro, QRO' },
+  querétaro: { lat: 20.6120, lng: -100.4100, fullName: 'Parque Industrial Querétaro, QRO' },
+  qro: { lat: 20.6120, lng: -100.4100, fullName: 'Querétaro, QRO' },
   sanjuan: { lat: 20.3880, lng: -99.9960, fullName: 'San Juan del Río, QRO' },
+  chuchuru: { lat: 20.5900, lng: -100.3800, fullName: 'CEDIS Chuchuru, QRO' },
+
+  // CDMX & Edomex Central Hubs
+  cdmx: { lat: 19.4326, lng: -99.1332, fullName: 'Ciudad de México, CDMX' },
+  mexico: { lat: 19.4326, lng: -99.1332, fullName: 'Ciudad de México, CDMX' },
+  méxico: { lat: 19.4326, lng: -99.1332, fullName: 'Ciudad de México, CDMX' },
+  vallejo: { lat: 19.4980, lng: -99.1620, fullName: 'CEDIS Vallejo, CDMX' },
+  tepotzotlan: { lat: 19.7042, lng: -99.2223, fullName: 'CEDIS Tepotzotlán, Edomex' },
+  tepotzotlán: { lat: 19.7042, lng: -99.2223, fullName: 'CEDIS Tepotzotlán, Edomex' },
+  cuautitlan: { lat: 19.6780, lng: -99.1760, fullName: 'Cuautitlán Izcalli, Edomex' },
+  cuautitlán: { lat: 19.6780, lng: -99.1760, fullName: 'Cuautitlán Izcalli, Edomex' },
+  tultitlan: { lat: 19.6450, lng: -99.1670, fullName: 'CEDIS Tultitlán, Edomex' },
+  tultitlán: { lat: 19.6450, lng: -99.1670, fullName: 'CEDIS Tultitlán, Edomex' },
+  sanmartin: { lat: 19.6050, lng: -99.2080, fullName: 'San Martín Obispo, Edomex' },
+  toluca: { lat: 19.2826, lng: -99.6557, fullName: 'Toluca, Edomex' },
+
+  // Monterrey & NAFTA Corridor
+  monterrey: { lat: 25.6866, lng: -100.3161, fullName: 'Monterrey, NL' },
+  mty: { lat: 25.6866, lng: -100.3161, fullName: 'Monterrey, NL' },
+  apodaca: { lat: 25.7813, lng: -100.1886, fullName: 'Apodaca Industrial Park, NL' },
+  escobedo: { lat: 25.8080, lng: -100.3220, fullName: 'Escobedo Hub, NL' },
+  saltillo: { lat: 25.4260, lng: -101.0000, fullName: 'Saltillo / Ramos Arizpe, COAH' },
+  laredo: { lat: 27.4864, lng: -99.5080, fullName: 'Nuevo Laredo, TAMPS' },
+  reynosa: { lat: 26.0500, lng: -98.2980, fullName: 'Reynosa, TAMPS' },
+  matamoros: { lat: 25.8690, lng: -97.5020, fullName: 'Matamoros, TAMPS' },
+
+  // Guadalajara & Bajío West
+  guadalajara: { lat: 20.6597, lng: -103.3496, fullName: 'Guadalajara, JAL' },
+  gdl: { lat: 20.6597, lng: -103.3496, fullName: 'Guadalajara, JAL' },
+  zapopan: { lat: 20.7200, lng: -103.3900, fullName: 'Zapopan Hub, JAL' },
   celaya: { lat: 20.5280, lng: -100.8140, fullName: 'Celaya, GTO' },
   leon: { lat: 21.1250, lng: -101.6860, fullName: 'León, GTO' },
+  león: { lat: 21.1250, lng: -101.6860, fullName: 'León, GTO' },
+  silao: { lat: 20.9437, lng: -101.4283, fullName: 'Puerto Interior Silao, GTO' },
+  irapuato: { lat: 20.6780, lng: -101.3540, fullName: 'Irapuato, GTO' },
   sanluis: { lat: 22.1565, lng: -100.9855, fullName: 'San Luis Potosí, SLP' },
-  monterrey: { lat: 25.6866, lng: -100.3161, fullName: 'Monterrey, NL' },
-  guadalajara: { lat: 20.6597, lng: -103.3496, fullName: 'Guadalajara, JAL' },
-  laredo: { lat: 27.4864, lng: -99.5080, fullName: 'Nuevo Laredo, TAMPS' },
+  aguascalientes: { lat: 21.8853, lng: -102.2916, fullName: 'Aguascalientes, AGS' },
+
+  // Puebla & Veracruz Port Corridor
   puebla: { lat: 19.0414, lng: -98.2063, fullName: 'Puebla, PUE' },
-  veracruz: { lat: 19.1738, lng: -96.1342, fullName: 'Veracruz, VER' },
-  toluca: { lat: 19.2826, lng: -99.6557, fullName: 'Toluca, Edomex' }
+  veracruz: { lat: 19.1738, lng: -96.1342, fullName: 'Puerto de Veracruz, VER' },
+  cordoba: { lat: 18.8840, lng: -96.9250, fullName: 'Córdoba, VER' },
+  córdoba: { lat: 18.8840, lng: -96.9250, fullName: 'Córdoba, VER' }
 };
 
 function getHubCoords(placeName: string): { lat: number; lng: number } {
-  const normalized = placeName.toLowerCase();
+  const normalized = placeName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   for (const [key, hub] of Object.entries(MEXICAN_LOGISTICS_HUBS)) {
-    if (normalized.includes(key)) {
+    const cleanKey = key.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (normalized.includes(cleanKey)) {
       return { lat: hub.lat, lng: hub.lng };
     }
   }
-  // Default to CDMX hub coordinates if unknown
-  return { lat: 19.4326, lng: -99.1332 };
+
+  // Deterministic Hash Fallback for unknown places: Converts string into distinct realistic MX coordinates
+  let hash = 0;
+  for (let i = 0; i < normalized.length; i++) {
+    hash = (hash << 5) - hash + normalized.charCodeAt(i);
+    hash |= 0;
+  }
+  const latOffset = (Math.abs(hash) % 800) / 100; // Offset between 0 - 8 degrees
+  const lngOffset = (Math.abs(hash >> 3) % 600) / 100; // Offset between 0 - 6 degrees
+
+  return {
+    lat: 19.50 + latOffset, // Covers 19.5°N (CDMX) to 27.5°N (Norte)
+    lng: -99.20 - lngOffset  // Covers -99.2°W (Centro) to -105.2°W (Occidente)
+  };
 }
 
 function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
