@@ -352,9 +352,9 @@ export const NewTripModal: React.FC<NewTripModalProps> = ({ isOpen, onClose }) =
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center space-x-2"
+              className="px-5 py-2.5 bg-[#0061FF] hover:bg-[#0052D4] text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center space-x-2"
             >
-              <Truck className="w-4 h-4" />
+              <Truck className="w-4 h-4 text-white" />
               <span>Despachar Viaje & Generar Carta Porte</span>
             </button>
           </div>

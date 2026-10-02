@@ -120,7 +120,7 @@ export const MoneyRecoveryView: React.FC = () => {
                     e.stopPropagation();
                     setSelectedCaseId(c.id);
                   }}
-                  className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors"
+                  className="px-3.5 py-1.5 bg-[#0061FF] hover:bg-[#0052D4] text-white text-xs font-bold rounded-lg shadow-xs transition-colors"
                 >
                   Review case
                 </button>
@@ -135,7 +135,7 @@ export const MoneyRecoveryView: React.FC = () => {
         <div className="p-6 bg-white rounded-2xl border border-slate-200/80 space-y-4 shadow-xs">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <span className="text-xs font-bold text-emerald-800 uppercase font-mono">
+              <span className="text-xs font-bold text-[#0061FF] uppercase font-mono">
                 RECOVERY CASE INSPECTOR
               </span>
               <h3 className="text-lg font-bold text-slate-900 mt-0.5">
@@ -161,7 +161,7 @@ export const MoneyRecoveryView: React.FC = () => {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setShowPrintModal(true)}
-                className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg shadow-xs flex items-center space-x-1.5 transition-colors"
+                className="px-3.5 py-1.5 bg-[#0061FF] hover:bg-[#0052D4] text-white text-xs font-bold rounded-lg shadow-xs flex items-center space-x-1.5 transition-colors"
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span>Generar Reporte de Cobro PDF</span>

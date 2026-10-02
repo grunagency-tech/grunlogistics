@@ -4,17 +4,51 @@
 
 @layer base {
   body {
-    background-color: #F7F7F5;
-    color: #111827;
+    background-color: #F7F9FA;
+    color: #1E1915;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Apple / Linear Style Ultra-Clean Scrollbar */
+/* Custom Dropbox Brand Design Utilities */
+.bg-dropbox-blue {
+  background-color: #0061FF;
+}
+
+.bg-dropbox-blue-dark {
+  background-color: #0052D4;
+}
+
+.bg-dropbox-light {
+  background-color: #EDF5FF;
+}
+
+.bg-dropbox-charcoal {
+  background-color: #1E1915;
+}
+
+.text-dropbox-blue {
+  color: #0061FF;
+}
+
+.text-dropbox-charcoal {
+  color: #1E1915;
+}
+
+.border-dropbox-blue {
+  border-color: #0061FF;
+}
+
+.ring-dropbox-blue {
+  --tw-ring-color: #0061FF;
+}
+
+/* Dropbox Clean Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -22,15 +56,27 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E2E8F0;
+  background: #CBD5E1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #CBD5E1;
+  background: #0061FF;
 }
 
-/* Micro-interactions */
+/* Dropbox Micro-interactions & Cards */
+.dropbox-card {
+  background-color: #FFFFFF;
+  border: 1px solid #EAEEF2;
+  border-radius: 0.85rem;
+  transition: all 0.15s ease-in-out;
+}
+
+.dropbox-card:hover {
+  border-color: #CBD5E1;
+  box-shadow: 0 4px 12px rgba(0, 97, 255, 0.05);
+}
+
 .transition-subtle {
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }

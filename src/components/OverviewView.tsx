@@ -31,33 +31,54 @@ export const OverviewView: React.FC = () => {
 
   return (
     <div className="p-6 md:p-8 space-y-8 max-w-6xl mx-auto font-sans text-slate-900">
-      {/* Editorial Header Composition (Requirement 2 & 5) */}
-      <div className="space-y-3 pb-6 border-b border-slate-200/60">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 font-sans">
-          Buenos días.
-        </h1>
-        <p className="text-base font-medium text-slate-600">
-          Aquí está lo importante de tu operación hoy.
-        </p>
+      {/* Dropbox-Style Hero Header Banner */}
+      <div className="bg-gradient-to-r from-[#1E1915] via-slate-900 to-[#0061FF] text-white p-6 md:p-8 rounded-2xl shadow-md border border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="space-y-2">
+          <div className="inline-flex items-center space-x-2 bg-[#0061FF]/20 text-[#0061FF] bg-white/10 backdrop-blur-xs px-3 py-1 rounded-full text-xs font-bold border border-white/20">
+            <span>✨ Tablero de Inteligencia de Operaciones</span>
+          </div>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-sans">
+            Buenos días, Operaciones.
+          </h1>
+          <p className="text-xs md:text-sm text-slate-300 max-w-xl">
+            Tu flota está 100% sincronizada con Carta Porte SAT 3.1, telemetría Samsara e inteligencia de rutas HERE Maps v8.
+          </p>
+        </div>
 
-        {/* Minimal Clean Text Summary (Requirement 5: NO 4 KPI Cards) */}
-        <div className="pt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs md:text-sm text-slate-600 font-medium">
-          <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-600" />
-            <span>
-              <strong className="text-slate-900 font-bold font-mono text-base">{activeTripsCount}</strong>{' '}
-              viajes activos
-            </span>
-          </div>
-          <span className="text-slate-300">•</span>
-          <div>
-            <strong className="text-emerald-800 font-bold font-mono text-base">$1.07M</strong>{' '}
-            margen generado este mes
-          </div>
-          <span className="text-slate-300">•</span>
-          <div className="text-amber-800 font-semibold">
-            <strong className="font-mono text-base">{pendingExceptions.length}</strong> excepciones requieren atención
-          </div>
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <button
+            onClick={() => setCurrentView('TRIPS')}
+            className="px-4 py-2.5 bg-[#0061FF] hover:bg-[#0052D4] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center space-x-2"
+          >
+            <span>Despachar Nuevo Viaje</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setCurrentView('DOCUMENTS')}
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl border border-white/20 transition-all"
+          >
+            <span>🗂️ Bóveda Dropbox</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Minimal Clean Text Summary Bar */}
+      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4 text-xs md:text-sm text-slate-600 font-medium">
+        <div className="flex items-center space-x-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#0061FF]" />
+          <span>
+            <strong className="text-slate-900 font-bold font-mono text-base">{activeTripsCount}</strong>{' '}
+            viajes activos en ruta
+          </span>
+        </div>
+        <span className="hidden md:inline text-slate-300">•</span>
+        <div>
+          <strong className="text-emerald-800 font-bold font-mono text-base">$1.07M MXN</strong>{' '}
+          margen neto generado este mes
+        </div>
+        <span className="hidden md:inline text-slate-300">•</span>
+        <div className="text-amber-800 font-semibold">
+          <strong className="font-mono text-base">{pendingExceptions.length}</strong> excepciones requieren atención
         </div>
       </div>
 

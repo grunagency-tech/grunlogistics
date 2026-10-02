@@ -143,14 +143,14 @@ export const Sidebar: React.FC = () => {
                         isCollapsed ? 'justify-center px-2' : 'justify-between px-3'
                       } py-2 rounded-lg text-xs font-medium transition-all ${
                         isActive
-                          ? 'bg-emerald-50 text-emerald-950 font-semibold border border-emerald-200/60'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/40'
+                          ? 'bg-[#EDF5FF] text-[#0061FF] font-bold border border-[#0061FF]/30 shadow-2xs'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
                       }`}
                     >
                       <div className="flex items-center space-x-2.5">
                         <Icon
                           className={`w-4 h-4 ${
-                            isActive ? 'text-emerald-700' : 'text-slate-400 group-hover:text-slate-600'
+                            isActive ? 'text-[#0061FF]' : 'text-slate-400 group-hover:text-slate-600'
                           }`}
                         />
                         {!isCollapsed && <span>{item.label}</span>}
@@ -159,7 +159,7 @@ export const Sidebar: React.FC = () => {
                         <span
                           className={`text-[10px] px-1.5 py-0.2 rounded font-bold font-mono ${
                             isActive
-                              ? 'bg-emerald-800 text-white'
+                              ? 'bg-[#0061FF] text-white'
                               : 'bg-amber-100 text-amber-900 border border-amber-200'
                           }`}
                         >
